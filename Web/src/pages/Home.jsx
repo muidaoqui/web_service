@@ -7,6 +7,12 @@ import Slider from "react-slick";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import bg2 from "../assets/bg2.png";
+import bg3 from "../assets/bg3.png";
+import RotatingDots from "../components/RotatingDots";
+import WebHosting from "../assets/WebHosting.png";
+import Domain from "../assets/Domain.png";
+import Laptop from "../assets/Laptop.png";
+import Email from "../assets/Email.png";
 
 function PrevArrow(props) {
     return (
@@ -78,8 +84,8 @@ function Home() {
     };
 
     return (
-        <div>
-            <div className="flex justify-around items-center h-full min-h-screen bg-white">
+        <div className="bg-gray-100">
+            <div className="flex justify-around items-center h-full min-h-screen ml-20">
                 <div className="flex flex-col align-center items-center text-center w-1/2 ">
                     <h1 className="text-4xl font-bold text-red-600">
                         KIỂM TRA TÊN MIỀN
@@ -139,14 +145,64 @@ function Home() {
                     </div>
                 </div>
             </div>
-            <div>
-                <div>
+            <div className="relative min-h-screen flex justify-center items-center overflow-hidden">
+                {/* Background image */}
+                <img
+                    src={bg3}
+                    alt="Background"
+                    className="absolute inset-0 w-3/4  object-cover z-0"
+                />
 
-                </div>
-                <div>
-                    
+                {/* Overlay content */}
+                <div className="relative z-10 flex w-full min-h-screen">
+                    {/* Left: RotatingDots */}
+                    <div className="w-1/2 flex items-center justify-center">
+                        <RotatingDots />
+                    </div>
+
+                    {/* Right: Grid content */}
+                    <div className="w-1/2 flex items-center justify-center">
+                        <div className="grid grid-cols-2 gap-10 p-10 mr-10">
+                            {/* Card 1 */}
+                            <div className="flex flex-col items-center gap-4 rounded-lg shadow-lg bg-white/80 p-4">
+                                <img src={Laptop} alt="Web Hosting" className="w-16 h-auto" />
+                                <h1 className="text-center text-red-500 text-2xl font-bold">Thiết kế Website</h1>
+                                <p className="text-center text-gray-600">
+                                    Website đầy đủ tính năng chính. Có thể quản trị nội dung qua trang quản trị.
+                                </p>
+                            </div>
+
+                            {/* Card 2 */}
+                            <div className="flex flex-col items-center gap-4 rounded-lg shadow-lg bg-white/80 p-4">
+                                <img src={Domain} alt="Domain" className="w-16 h-auto" />
+                                <h1 className="text-center text-red-500 text-2xl font-bold">Tên miền</h1>
+                                <p className="text-center text-gray-600">
+                                    Domain hỗ trợ đầy đủ các record như A, MX miễn phí qua Control Panel.
+                                </p>
+                            </div>
+
+                            {/* Card 3 */}
+                            <div className="flex flex-col items-center gap-4 rounded-lg shadow-lg bg-white/80 p-4">
+                                <img src={Email} alt="Email" className="w-16 h-auto" />
+                                <h1 className="text-center text-red-500 text-2xl font-bold">Email</h1>
+                                <p className="text-center text-gray-600">
+                                    Giải pháp email cho công ty giao dịch thương mại với nhiều tài khoản.
+                                </p>
+                            </div>
+
+                            {/* Card 4 */}
+                            <div className="flex flex-col items-center gap-4 rounded-lg shadow-lg bg-white/80 p-4">
+                                <img src={WebHosting} alt="Web Hosting" className="w-16 h-auto" />
+                                <h1 className="text-center text-red-500 text-2xl font-bold">Web Hosting</h1>
+                                <p className="text-center text-gray-600">
+                                    Cho cá nhân/doanh nghiệp muốn giới thiệu hoặc giao dịch online hiệu quả.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
     );
 }
