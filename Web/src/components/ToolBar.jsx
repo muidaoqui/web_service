@@ -3,7 +3,7 @@ import logo from '../assets/logo.png';
 
 function ToolBar() {
     return (
-        <div className="flex justify-around items-center">
+        <div className="flex justify-around items-center shadow-md bg-white text-xl font-bold">
             <div>
                <img src={logo} alt="Logo" className="w-auto h-40" />
             </div>
@@ -18,7 +18,9 @@ function ToolBar() {
                 <div>TUYỂN DỤNG</div>
             </div>
             <div>
-                
+                <button className="bg-red-500 text-white py-2 px-4 rounded-xl h-16 hover:bg-red-600 transition duration-300">
+                    LIÊN HỆ TƯ VẤN
+                </button>
             </div>
         </div>
     );
