@@ -52,7 +52,7 @@ const features = [
     },
 ];
 
-function Procedure() {
+function Advantage() {
     return (
         <div className="relative p-20 shadow-md rounded-lg mt-8 text-center overflow-hidden">
             <img src={bg3} alt="Background" className="absolute inset-0 w-3/4 object-cover z-0" />
@@ -97,4 +97,4 @@ function Procedure() {
     );
 }
 
-export default Procedure;
+export default Advantage;

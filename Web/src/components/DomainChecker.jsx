@@ -2,12 +2,12 @@ import React from "react";
 import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Slider from "react-slick";
-import { FaTrashAlt } from "react-icons/fa";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import bg2 from "../assets/bg2.png";
 import bg3 from "../assets/bg3.png";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { FaGift } from "react-icons/fa";
 
 function PrevArrow(props) {
     return (
@@ -104,7 +104,7 @@ function DomainChecker() {
                                         <span className="text-sm font-semibold">{item.type}</span>
                                         <span className="mx-2 font-bold">{item.price}</span>
                                         <div className="bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                            <FaTrashAlt size={12} />
+                                            <FaGift size={12} />
                                         </div>
                                     </div>
                                 </div>

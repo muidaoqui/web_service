@@ -3,11 +3,11 @@ import logo from '../assets/logo.png';
 
 function ToolBar() {
     return (
-        <div className="flex justify-around items-center shadow-md bg-white text-xl font-bold">
+        <div className="flex justify-around items-center shadow-md bg-white text-md font-bold">
             <div>
                <img src={logo} alt="Logo" className="w-auto h-40" />
             </div>
-            <div className="flex justify-between items-center gap-16">
+            <div className="flex justify-between items-center gap-8">
                 <div>TÊN MIỀN</div>
                 <div>HOSTING</div>
                 <div>EMAIL SERVER</div>
