@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@layer utilities {
+  /* Animation chuyển động dash từ trái sang phải */
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  .animate-dash path {
+    stroke-dasharray: 10;
+    stroke-dashoffset: 0;
+    animation: dash 2s linear infinite;
+  }
+}
