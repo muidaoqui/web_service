@@ -20,10 +20,10 @@ const marginTops = ["mt-0", "mt-10", "mt-5", "mt-12", "mt-4"];
 function Procedure() {
 
     return (
-        <div className="relative mx-auto p-6 bg-gradient-to-b from-white to-gray-200 shadow-md rounded-lg mt-8 text-center overflow-hidden">
+        <div className="relative mx-auto p-6 bg-gradient-to-b from-white to-gray-100  mt-8 text-center overflow-hidden">
             <img src={bg3} alt="Background" className="absolute inset-0 w-3/4 object-cover z-0" />
             <div className="relative z-10">
-                <h1 className="text-3xl font-bold mb-4 text-red-500">QUY TRÌNH THIẾT KẾ WEBSITE</h1>
+                <h1 className="text-3xl font-bold my-4 text-red-500">QUY TRÌNH THIẾT KẾ WEBSITE</h1>
                 <p className="text-gray-600">Chỉ với 5 bước đơn giản dưới đây bạn đã sở hữu một website chuyên nghiệp.</p>
                 <div>
                     <div className="relative px-10 py-24  overflow-hidden">

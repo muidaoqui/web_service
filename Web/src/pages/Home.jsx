@@ -5,6 +5,7 @@ import PricingSection from "../components/PricingSection";
 import HostingPrice from "../components/HostingPrice";
 import PackagePrice from "../components/PackagePrice";
 import Procedure from "../components/Procedure";
+import Adventage from "../components/Advantage";
 function Home() {
     return (
         <div className="bg-gray-100">
@@ -14,6 +15,7 @@ function Home() {
             <HostingPrice />
             <PackagePrice />
             <Procedure />
+            <Adventage />
             {/* Add more sections as needed */}
         </div>
     );
