@@ -74,7 +74,6 @@ const settings = {
 function DomainChecker() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <img src={bg3} alt="Background" className="absolute inset-0 w-1/2 h-full object-cover opacity-50" />
             <div className="flex w-full  items-center justify-between ">
                 {/* Cột trái */}
                 <div className="w-1/2 flex flex-col items-center text-center px-8">
