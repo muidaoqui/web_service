@@ -4,18 +4,30 @@ const hostingController = {
     // CREATE
     create: async (req, res) => {
         try {
-            const { name, price, capacity, subdomain, mysql, email, backup } = req.body;
-            if (name == null || price == null || capacity == null || subdomain == null || mysql == null || email == null) {
+            const { name, price, dungluong, subdomain, mysql, email, backup, yearly, type } = req.body;
+
+            // Kiểm tra dữ liệu bắt buộc
+            if (!name || price == null || !dungluong || !subdomain || !mysql || !email || !yearly || !type) {
                 return res.status(400).send({ message: 'Data is required!', success: false });
             }
 
+            // Kiểm tra name đã tồn tại chưa
             const existedName = await HostingModel.findOne({ name });
             if (existedName) {
                 return res.status(409).send({ message: 'Hosting name already exists!', success: false });
             }
 
+            // Tạo mới
             const newHosting = await HostingModel.create({
-                name, price, capacity, subdomain, mysql, email, backup
+                name,
+                price,
+                dungluong,
+                subdomain,
+                mysql,
+                email,
+                backup,
+                yearly,
+                type
             });
 
             res.status(201).send({ data: newHosting, message: 'Created successfully', success: true });
@@ -38,7 +50,9 @@ const hostingController = {
     getById: async (req, res) => {
         try {
             const hosting = await HostingModel.findById(req.params.id);
-            if (!hosting) return res.status(404).send({ message: 'Hosting not found', success: false });
+            if (!hosting) {
+                return res.status(404).send({ message: 'Hosting not found', success: false });
+            }
             res.status(200).send({ data: hosting, success: true });
         } catch (error) {
             res.status(500).send({ message: error.message, success: false });
@@ -51,9 +65,11 @@ const hostingController = {
             const updatedHosting = await HostingModel.findByIdAndUpdate(
                 req.params.id,
                 req.body,
-                { new: true }
+                { new: true, runValidators: true }
             );
-            if (!updatedHosting) return res.status(404).send({ message: 'Hosting not found', success: false });
+            if (!updatedHosting) {
+                return res.status(404).send({ message: 'Hosting not found', success: false });
+            }
             res.status(200).send({ data: updatedHosting, message: 'Updated successfully', success: true });
         } catch (error) {
             res.status(500).send({ message: error.message, success: false });
@@ -64,7 +80,9 @@ const hostingController = {
     delete: async (req, res) => {
         try {
             const deletedHosting = await HostingModel.findByIdAndDelete(req.params.id);
-            if (!deletedHosting) return res.status(404).send({ message: 'Hosting not found', success: false });
+            if (!deletedHosting) {
+                return res.status(404).send({ message: 'Hosting not found', success: false });
+            }
             res.status(200).send({ message: 'Deleted successfully', success: true });
         } catch (error) {
             res.status(500).send({ message: error.message, success: false });
