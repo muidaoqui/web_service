@@ -7,11 +7,10 @@ const app = express();
 app.use(express.json());
 
 // Kết nối MongoDB
-mongoose.connect("mongodb://localhost:27017/QL_Web", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => console.error(err));
+mongoose.connect("mongodb://localhost:27017/QL_Web")
+    .then(() => console.log("✅ MongoDB Connected"))
+    .catch(err => console.error(err));
+
 
 // Định nghĩa route
 app.use("/api/domains", domainRoutes);

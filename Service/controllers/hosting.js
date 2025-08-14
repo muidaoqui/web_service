@@ -1,78 +1,100 @@
 import HostingModel from "../model/hosting.js";
 
+// Helper response
+const sendResponse = (res, status, success, message, data = null) => {
+    const response = { success, message };
+    if (data !== null) response.data = data;
+    return res.status(status).json(response);
+};
+
+// Validate input
+const validateHostingInput = (body, isUpdate = false) => {
+    const { name, price, dungluong, subdomain, mysql, email, yearly, type } = body;
+
+    if (!isUpdate) {
+        if (!name || price == null || !dungluong || !subdomain || !mysql || !email || !yearly || !type) {
+            return "All required fields must be provided!";
+        }
+    }
+
+    if (price != null && (isNaN(price) || Number(price) <= 0)) {
+        return "Price must be greater than 0";
+    }
+    if (yearly != null && (isNaN(yearly) || Number(yearly) <= 0)) {
+        return "Yearly price must be greater than 0";
+    }
+    return null;
+};
+
 const hostingController = {
     // CREATE
     create: async (req, res) => {
         try {
-            const { name, price, dungluong, subdomain, mysql, email, backup, yearly, type } = req.body;
+            const error = validateHostingInput(req.body);
+            if (error) return sendResponse(res, 400, false, error);
 
-            // Kiểm tra dữ liệu bắt buộc
-            if (!name || price == null || !dungluong || !subdomain || !mysql || !email || !yearly || !type) {
-                return res.status(400).send({ message: 'Data is required!', success: false });
-            }
+            const { name } = req.body;
 
-            // Kiểm tra name đã tồn tại chưa
-            const existedName = await HostingModel.findOne({ name });
+            // Check duplicate
+            const existedName = await HostingModel.findOne({ name }).lean();
             if (existedName) {
-                return res.status(409).send({ message: 'Hosting name already exists!', success: false });
+                return sendResponse(res, 409, false, "Hosting name already exists!");
             }
 
-            // Tạo mới
-            const newHosting = await HostingModel.create({
-                name,
-                price,
-                dungluong,
-                subdomain,
-                mysql,
-                email,
-                backup,
-                yearly,
-                type
-            });
-
-            res.status(201).send({ data: newHosting, message: 'Created successfully', success: true });
+            const newHosting = await HostingModel.create(req.body);
+            return sendResponse(res, 201, true, "Created successfully", newHosting);
         } catch (error) {
-            res.status(500).send({ message: error.message, success: false });
+            return sendResponse(res, 500, false, error.message);
         }
     },
 
-    // READ ALL
+    // READ ALL (with optional filter + pagination)
     getAll: async (req, res) => {
         try {
-            const hostings = await HostingModel.find();
-            res.status(200).send({ data: hostings, success: true });
+            const { type, page = 1, limit = 20 } = req.query;
+            const query = type ? { type } : {};
+            const skip = (page - 1) * limit;
+
+            const hostings = await HostingModel.find(query).skip(skip).limit(Number(limit)).lean();
+            const total = await HostingModel.countDocuments(query);
+
+            return sendResponse(res, 200, true, "Fetched successfully", { hostings, total });
         } catch (error) {
-            res.status(500).send({ message: error.message, success: false });
+            return sendResponse(res, 500, false, error.message);
         }
     },
 
     // READ ONE
     getById: async (req, res) => {
         try {
-            const hosting = await HostingModel.findById(req.params.id);
+            const hosting = await HostingModel.findById(req.params.id).lean();
             if (!hosting) {
-                return res.status(404).send({ message: 'Hosting not found', success: false });
+                return sendResponse(res, 404, false, "Hosting not found");
             }
-            res.status(200).send({ data: hosting, success: true });
+            return sendResponse(res, 200, true, "Fetched successfully", hosting);
         } catch (error) {
-            res.status(500).send({ message: error.message, success: false });
+            return sendResponse(res, 500, false, error.message);
         }
     },
 
     // UPDATE
     update: async (req, res) => {
         try {
+            const error = validateHostingInput(req.body, true);
+            if (error) return sendResponse(res, 400, false, error);
+
             const updatedHosting = await HostingModel.findByIdAndUpdate(
                 req.params.id,
                 req.body,
                 { new: true, runValidators: true }
             );
+
             if (!updatedHosting) {
-                return res.status(404).send({ message: 'Hosting not found', success: false });
+                return sendResponse(res, 404, false, "Hosting not found");
             }
-            res.status(200).send({ data: updatedHosting, message: 'Updated successfully', success: true });
+            return sendResponse(res, 200, true, "Updated successfully", updatedHosting);
         } catch (error) {
-            res.status(500).send({ message: error.message, success: false });
+            return sendResponse(res, 500, false, error.message);
         }
     },
 
@@ -81,11 +103,11 @@ const hostingController = {
         try {
             const deletedHosting = await HostingModel.findByIdAndDelete(req.params.id);
             if (!deletedHosting) {
-                return res.status(404).send({ message: 'Hosting not found', success: false });
+                return sendResponse(res, 404, false, "Hosting not found");
             }
-            res.status(200).send({ message: 'Deleted successfully', success: true });
+            return sendResponse(res, 200, true, "Deleted successfully");
         } catch (error) {
-            res.status(500).send({ message: error.message, success: false });
+            return sendResponse(res, 500, false, error.message);
         }
     }
 };
