@@ -4,17 +4,38 @@ const domainController = {
     // CREATE
     create: async (req, res) => {
         try {
-            const { name, price, transfer } = req.body;
-            if (name == null || price == null || transfer == null) {
-                return res.status(400).send({ message: 'Data is required!', success: false });
+            const { name, newPrice, renewPrice, transfer, type } = req.body;
+
+            // Validate required fields
+            if (!name || newPrice == null || renewPrice == null || !type) {
+                return res.status(400).send({ message: 'All required fields must be provided!', success: false });
             }
 
+            // Validate type
+            if (!['vn', 'qt'].includes(type)) {
+                return res.status(400).send({ message: 'Invalid type! Must be "vn" or "qt".', success: false });
+            }
+
+            // Validate price
+            if (newPrice <= 0 || renewPrice <= 0) {
+                return res.status(400).send({ message: 'Prices must be greater than 0', success: false });
+            }
+
+            // Check duplicate name
             const existedName = await DomainModel.findOne({ name });
             if (existedName) {
                 return res.status(409).send({ message: 'Domain name already exists!', success: false });
             }
 
-            const newDomain = await DomainModel.create({ name, price, transfer });
+            // Create
+            const newDomain = await DomainModel.create({
+                name,
+                newPrice,
+                renewPrice,
+                transfer: transfer || undefined, // undefined để dùng default
+                type
+            });
+
             res.status(201).send({ data: newDomain, message: 'Created successfully', success: true });
         } catch (error) {
             res.status(500).send({ message: error.message, success: false });
@@ -45,6 +66,19 @@ const domainController = {
     // UPDATE
     update: async (req, res) => {
         try {
+            const { newPrice, renewPrice, type } = req.body;
+
+            // Optional validations if provided
+            if (type && !['vn', 'qt'].includes(type)) {
+                return res.status(400).send({ message: 'Invalid type! Must be "vn" or "qt".', success: false });
+            }
+            if (newPrice != null && newPrice <= 0) {
+                return res.status(400).send({ message: 'newPrice must be greater than 0', success: false });
+            }
+            if (renewPrice != null && renewPrice <= 0) {
+                return res.status(400).send({ message: 'renewPrice must be greater than 0', success: false });
+            }
+
             const updatedDomain = await DomainModel.findByIdAndUpdate(
                 req.params.id,
                 req.body,
