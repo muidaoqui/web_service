@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import Domain from './pages/Domain';
 import Hosting from './pages/Hosting';
 import Email from './pages/Email'
+import Login from './pages/Login';
+import Register from './pages/Register';
 function App() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -26,6 +28,8 @@ function App() {
             <Route path="/maintenance" element={<div>Maintenance Page</div>} />
             <Route path="/recruitment" element={<div>Recruitment Page</div>} />
             <Route path="/contact" element={<div>Contact Page</div>} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </div>
 

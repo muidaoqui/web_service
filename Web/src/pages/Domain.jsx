@@ -58,10 +58,10 @@ function Domain() {
   // Fetch API
   useEffect(() => {
     axios.get("/api/domains")
-  .then((res) => {
-    console.log("API domains:", res.data);
-    setDomains(res.data.data || res.data || []);
-  })
+      .then((res) => {
+        console.log("API domains:", res.data);
+        setDomains(res.data.data || res.data || []);
+      })
 
       .catch((err) => console.error("Lỗi khi fetch domain:", err))
       .finally(() => setLoading(false));
@@ -71,8 +71,8 @@ function Domain() {
 
   // chia domain thành 2 nhóm: vn, qt
   const vnDomains = Array.isArray(domains) ? domains.filter((d) => d.type === "vn") : [];
-const qtDomains = Array.isArray(domains) ? domains.filter((d) => d.type === "qt") : [];
-const sliderDomains = Array.isArray(domains) ? domains.slice(0, 6) : [];
+  const qtDomains = Array.isArray(domains) ? domains.filter((d) => d.type === "qt") : [];
+  const sliderDomains = Array.isArray(domains) ? domains.slice(0, 6) : [];
 
 
   return (
@@ -137,30 +137,26 @@ const sliderDomains = Array.isArray(domains) ? domains.slice(0, 6) : [];
             {vnDomains.map((domain, index) => (
               <React.Fragment key={domain._id}>
                 <div
-                  className={`col-span-2 p-2 font-semibold ${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  }`}
+                  className={`col-span-2 p-2 font-semibold ${index % 2 ? "bg-red-50" : "bg-white"
+                    }`}
                 >
                   {domain.name}
                 </div>
                 <div
-                  className={`${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  } p-2 text-red-600 font-bold`}
+                  className={`${index % 2 ? "bg-red-50" : "bg-white"
+                    } p-2 text-red-600 font-bold`}
                 >
                   {domain.newPrice.toLocaleString("vi-VN")}đ
                 </div>
                 <div
-                  className={`${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  } p-2 text-gray-700`}
+                  className={`${index % 2 ? "bg-red-50" : "bg-white"
+                    } p-2 text-gray-700`}
                 >
                   {domain.renewPrice.toLocaleString("vi-VN")}đ
                 </div>
                 <div
-                  className={`${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  } p-2 text-green-600`}
+                  className={`${index % 2 ? "bg-red-50" : "bg-white"
+                    } p-2 text-green-600`}
                 >
                   {domain.transfer}
                 </div>
@@ -189,30 +185,26 @@ const sliderDomains = Array.isArray(domains) ? domains.slice(0, 6) : [];
             {qtDomains.map((domain, index) => (
               <React.Fragment key={domain._id}>
                 <div
-                  className={`col-span-2 p-2 font-semibold ${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  }`}
+                  className={`col-span-2 p-2 font-semibold ${index % 2 ? "bg-red-50" : "bg-white"
+                    }`}
                 >
                   {domain.name}
                 </div>
                 <div
-                  className={`${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  } p-2 text-red-600 font-bold`}
+                  className={`${index % 2 ? "bg-red-50" : "bg-white"
+                    } p-2 text-red-600 font-bold`}
                 >
                   {domain.newPrice.toLocaleString("vi-VN")}đ
                 </div>
                 <div
-                  className={`${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  } p-2 text-gray-700`}
+                  className={`${index % 2 ? "bg-red-50" : "bg-white"
+                    } p-2 text-gray-700`}
                 >
                   {domain.renewPrice.toLocaleString("vi-VN")}đ
                 </div>
                 <div
-                  className={`${
-                    index % 2 ? "bg-red-50" : "bg-white"
-                  } p-2 text-green-600`}
+                  className={`${index % 2 ? "bg-red-50" : "bg-white"
+                    } p-2 text-green-600`}
                 >
                   {domain.transfer}
                 </div>
