@@ -1,14 +1,15 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ToolBar from './components/ToolBar';
-import Home from './pages/Home';
+import Home from './pages/custom/Home';
 import Footer from './components/Footer';
-import Domain from './pages/Domain';
-import Hosting from './pages/Hosting';
-import Email from './pages/Email'
-import Login from './pages/Login';
-import Register from './pages/Register';
-import AdminLogin from './pages/AdminLogin'
+import Domain from './pages/custom/Domain';
+import Hosting from './pages/custom/Hosting';
+import Email from './pages/custom/Email'
+import Login from './pages/custom/Login';
+import Register from './pages/custom/Register';
+import AdminLogin from './pages/admin/AdminLogin'
+import AdminPanel from './pages/admin/AdminPanel';
 function App() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -32,6 +33,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/home/admin-login" element={<AdminLogin />} />
+            <Route path="/admin-panel" element={<AdminPanel />} />
           </Routes>
         </div>
 

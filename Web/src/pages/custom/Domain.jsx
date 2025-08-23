@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import vnLogo from "../assets/vn-lg-3203.svg";
-import qtLogo from "../assets/icann-3846.svg";
+import vnLogo from "../../assets/vn-lg-3203.svg";
+import qtLogo from "../../assets/icann-3846.svg";
 import { SearchOutlined } from "@ant-design/icons";
 import Slider from "react-slick";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";

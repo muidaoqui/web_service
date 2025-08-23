@@ -4,7 +4,7 @@ import { Tabs } from "antd";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import poster from "../assets/poster.png";
+import poster from "../../assets/poster.png";
 import {
   FiHardDrive,
   FiGlobe,
