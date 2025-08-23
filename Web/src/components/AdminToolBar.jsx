@@ -5,7 +5,7 @@ function AdminToolBar() {
   return (
   <div className="flex justify-around items-center shadow-md bg-white text-md font-bold">
             <div>
-                <Link to="/"><img src={logo} alt="Logo" className="w-auto h-40" /></Link>
+                <Link to="/admin/panel"><img src={logo} alt="Logo" className="w-auto h-40" /></Link>
             </div>
             <div className="flex justify-between items-center gap-8 cursor-pointer">
                 <Link to="/admin/domain">TÊN MIỀN</Link>
