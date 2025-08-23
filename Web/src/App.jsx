@@ -8,6 +8,7 @@ import Hosting from './pages/Hosting';
 import Email from './pages/Email'
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AdminLogin from './pages/AdminLogin'
 function App() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -30,6 +31,7 @@ function App() {
             <Route path="/contact" element={<div>Contact Page</div>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/home/admin-login" element={<AdminLogin />} />
           </Routes>
         </div>
 
