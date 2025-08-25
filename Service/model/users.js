@@ -1,12 +1,17 @@
-import mongoose from 'mongoose';
-import * as z from 'zod';
+// model/users.js
+import mongoose from "mongoose";
 
-const UserSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(2).max(100),
-  password: z.string().min(6).max(100)
+const userSchema = new mongoose.Schema({
+  email:   { type: String, required: true, unique: true },
+  name:    { type: String, required: true },
+  password:{ type: String, required: true },
+  phone:   { type: String },
+  address: { type: String },
+  role:    { type: String, enum: ["user", "admin"], default: "user" }
+}, {
+  versionKey: false,
+  timestamps: true
 });
 
-const UserModel = mongoose.model('User', UserSchema);
-
+const UserModel = mongoose.model("User", userSchema);
 export default UserModel;

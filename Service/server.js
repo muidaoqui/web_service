@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import domainRoutes from "./routes/domain.js";
 import hostingRoutes from "./routes/hosting.js";
+import userRoutes from './routes/users.js';
 
 const app = express();
 app.use(express.json());
@@ -15,5 +16,6 @@ mongoose.connect("mongodb://localhost:27017/QL_Web")
 // Định nghĩa route
 app.use("/api/domains", domainRoutes);
 app.use("/api/hostings", hostingRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(5000, () => console.log("Server running on port 5000"));
