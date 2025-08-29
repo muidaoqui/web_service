@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import domainRoutes from "./routes/domain.js";
 import hostingRoutes from "./routes/hosting.js";
 import userRoutes from './routes/users.js';
+import checkDomain from "./routes/checkDomain.js";
 
 const app = express();
 app.use(express.json());
@@ -17,5 +18,6 @@ mongoose.connect("mongodb://localhost:27017/QL_Web")
 app.use("/api/domains", domainRoutes);
 app.use("/api/hostings", hostingRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/check-domain", checkDomain);
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(5000, () => console.log("✅ Server running on port 5000"));

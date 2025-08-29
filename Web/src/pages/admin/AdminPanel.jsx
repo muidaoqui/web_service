@@ -1,6 +1,7 @@
 import React from "react";
 import logo from '../../assets/logo.png'
 import { FaRegHeart } from "react-icons/fa";
+
 import {
   LineChart, Line,
   BarChart, Bar,
@@ -41,7 +42,8 @@ const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28"];
 
 function AdminPanel() {
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Biểu đồ Doanh thu */}
       <div className="bg-white p-4 shadow rounded-2xl">
         <h2 className="text-lg font-semibold mb-2">Doanh thu theo tháng</h2>
@@ -109,6 +111,7 @@ function AdminPanel() {
           </LineChart>
         </ResponsiveContainer>
       </div>
+    </div>
     </div>
   );
 }
