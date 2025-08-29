@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 function AdminLayout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-200 to-yellow-100">
+    <div className="min-h-screen bg-black">
       {/* Toolbar nằm trên cùng */}
       <AdminToolBar />
 
