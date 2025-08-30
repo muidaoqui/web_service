@@ -1,55 +1,81 @@
-import React from "react";
-import logo from '../../assets/logo.png'
-import { FaRegHeart } from "react-icons/fa";
-import AdminUsersList from "../../components/AdminUsersList";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   LineChart, Line,
   BarChart, Bar,
   PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
+import AdminUsersList from "../../components/AdminUsersList";
+import AdminDomain from "../../components/AdminDomain";
+import AdminHosting from "../../components/AdminHosting";
 
-const doanhThuData = [
-  { tháng: "T1", doanhThu: 4000 },
-  { tháng: "T2", doanhThu: 3000 },
-  { tháng: "T3", doanhThu: 5000 },
-  { tháng: "T4", doanhThu: 4780 },
-  { tháng: "T5", doanhThu: 5890 },
-];
-
-const hostingData = [
-  { gói: "10GB", khách: 120 },
-  { gói: "20GB", khách: 80 },
-  { gói: "50GB", khách: 45 },
-];
-
-const domainData = [
-  { name: ".com", value: 60 },
-  { name: ".vn", value: 20 },
-  { name: ".net", value: 10 },
-  { name: "Khác", value: 10 },
-];
-
-const emailData = [
-  { ngày: "T2", gửi: 200, nhận: 150 },
-  { ngày: "T3", gửi: 250, nhận: 180 },
-  { ngày: "T4", gửi: 300, nhận: 200 },
-  { ngày: "T5", gửi: 280, nhận: 190 },
-  { ngày: "T6", gửi: 320, nhận: 210 },
-];
-
-const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28"];
+const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28", "#AA33FF"];
 
 function AdminPanel() {
+  const [domains, setDomains] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [hostings, setHostings] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resDomains = await axios.get("/api/domains");
+        const resUsers = await axios.get("/api/users");
+        const resHostings = await axios.get("/api/hostings");
+        setDomains(resDomains.data.data || []);
+        setUsers(resUsers.data.data || []);
+        setHostings(resHostings.data.data.hostings || []);
+      } catch (err) {
+        console.error("Lỗi fetch data:", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // --- DOMAIN DATA ---
+  const domainData = [
+    { name: "Quốc tế", value: domains.filter(d => d.type === "qt").length },
+    { name: ".VN", value: domains.filter(d => d.type === "vn").length },
+    { name: "Khác", value: domains.filter(d => d.type === "khac").length },
+  ];
+
+  const revenueDomainData = domains.map((d, i) => ({
+    tháng: `T${i + 1}`,
+    doanhThu: Number(d.newPrice) || 0
+  }));
+
+  // --- USER DATA ---
+  const userRoleData = [
+    { role: "Admin", count: users.filter(u => u.role === "admin").length },
+    { role: "User", count: users.filter(u => u.role === "user").length },
+  ];
+
+  const emailProviderData = [
+    { provider: "Gmail", count: users.filter(u => u.email?.includes("@gmail.com")).length },
+    { provider: "Yahoo", count: users.filter(u => u.email?.includes("@yahoo.com")).length },
+    { provider: "Khác", count: users.filter(u => u.email && !u.email.includes("@gmail.com") && !u.email.includes("@yahoo.com")).length },
+  ];
+
+  // --- HOSTING DATA ---
+  const hostingPlanData = hostings.map(h => ({
+    gói: h.name || "Không rõ",
+    khách: Number(h.customerCount) || 0,
+  }));
+
+  const revenueHostingData = hostings.map((h, i) => ({
+    tháng: `T${i + 1}`,
+    doanhThu: Number(h.price) || 0,
+  }));
+
   return (
     <div>
       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Biểu đồ Doanh thu */}
+        {/* Biểu đồ Doanh thu Domain */}
         <div className="bg-black p-4 shadow rounded-2xl">
-          <h2 className="text-lg font-semibold mb-2">Doanh thu theo tháng</h2>
+          <h2 className="text-lg font-semibold mb-2 text-white">Doanh thu Domain</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={doanhThuData}>
+            <LineChart data={revenueDomainData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="tháng" />
               <YAxis />
@@ -60,24 +86,54 @@ function AdminPanel() {
           </ResponsiveContainer>
         </div>
 
-        {/* Biểu đồ Hosting */}
+        {/* Biểu đồ Doanh thu Hosting */}
         <div className="bg-black p-4 shadow rounded-2xl">
-          <h2 className="text-lg font-semibold mb-2">Khách hàng theo gói Hosting</h2>
+          <h2 className="text-lg font-semibold mb-2 text-white">Doanh thu Hosting</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={hostingData}>
+            <LineChart data={revenueHostingData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="gói" />
+              <XAxis dataKey="tháng" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="khách" fill="#82ca9d" />
+              <Line type="monotone" dataKey="doanhThu" stroke="#00C49F" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Biểu đồ Role User */}
+        <div className="bg-black p-4 shadow rounded-2xl">
+          <h2 className="text-lg font-semibold mb-2 text-white">Người dùng theo Role</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={userRoleData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="role" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="count" fill="#82ca9d" />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Biểu đồ Domain */}
+        {/* Biểu đồ Email Provider */}
         <div className="bg-black p-4 shadow rounded-2xl">
-          <h2 className="text-lg font-semibold mb-2">Tỉ lệ Domain</h2>
+          <h2 className="text-lg font-semibold mb-2 text-white">Email theo nhà cung cấp</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={emailProviderData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="provider" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="count" fill="#ff7300" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Biểu đồ Domain Pie */}
+        <div className="bg-black p-4 shadow rounded-2xl">
+          <h2 className="text-lg font-semibold mb-2 text-white">Tỉ lệ Domain</h2>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
@@ -97,24 +153,27 @@ function AdminPanel() {
           </ResponsiveContainer>
         </div>
 
-        {/* Biểu đồ Email Server */}
+        {/* Biểu đồ Hosting Plan */}
         <div className="bg-black p-4 shadow rounded-2xl">
-          <h2 className="text-lg font-semibold mb-2">Email gửi/nhận</h2>
+          <h2 className="text-lg font-semibold mb-2 text-white">Khách hàng theo gói Hosting</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={emailData}>
+            <BarChart data={hostingPlanData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="ngày" />
+              <XAxis dataKey="gói" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="gửi" stroke="#ff7300" />
-              <Line type="monotone" dataKey="nhận" stroke="#387908" />
-            </LineChart>
+              <Bar dataKey="khách" fill="#FFBB28" />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
-      <div>
+
+      {/* Bảng quản lý */}
+      <div className="mt-6 space-y-6">
         <AdminUsersList />
+        <AdminDomain />
+        <AdminHosting />
       </div>
     </div>
   );

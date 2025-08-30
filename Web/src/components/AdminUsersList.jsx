@@ -1,57 +1,256 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import {
+  Table,
+  Tag,
+  Button,
+  Space,
+  Modal,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  Switch,
+} from "antd";
 
+const { Option } = Select;
+const { confirm } = Modal;
+const { Search } = Input;
 
 function AdminUsersList() {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [filterRole, setFilterRole] = useState("all");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [form] = Form.useForm();
 
-    // Fetch API
-    useEffect(() => {
-        axios.get("/api/users")
-            .then((res) => {
-                console.log("API users:", res.data);
-                setUsers(res.data.data || res.data || []);
-            })
+  // fetch API
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("/api/users");
+      const data = res.data.data || res.data || [];
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Lỗi khi fetch users:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            .catch((err) => console.error("Lỗi khi fetch users:", err))
-            .finally(() => setLoading(false));
-    }, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-    if (loading) return <p className="text-center py-10">Đang tải...</p>;
+  // mở form sửa
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    form.setFieldsValue(user);
+    setIsDrawerOpen(true);
+  };
 
-    return (
-        <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-4">
-            <h2 className="text-3xl font-bold text-center mb-8">DANH SÁCH NGƯỜI DÙNG</h2>
-            <div>
-                <table className="min-w-full divide-y divide-gray-700 text-center">
-                    <thead className="bg-gray-800">
-                        <tr>
-                            <th className="px-6 py-3  text-xs font-medium text-gray-400 uppercase tracking-wider">Tên người dùng</th>
-                            <th className="px-6 py-3  text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
-                            <th className="px-6 py-3  text-xs font-medium text-gray-400 uppercase tracking-wider">Trạng thái</th>
-                            <th className="px-6 py-3  text-xs font-medium text-gray-400 uppercase tracking-wider">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-gray-900 divide-y divide-gray-700">
-                        {users.map((user) => (
-                            <tr key={user.id} className="">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{user.name}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.email}</td>
-                                {/* nếu đã xóa thì màu đỏ không thì màu xanh lá */}
-                                <td className={`px-6 py-4 whitespace-nowrap text-sm ${user.isDeleted ? "text-red-500" : "text-green-500"}`}>
-                                    {user.isDeleted ? "Đã xóa" : "Hoạt động"}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                    <button className="text-red-500 hover:text-red-700">Xóa</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+  // mở form thêm mới
+  const handleCreateNew = () => {
+    setSelectedUser(null);
+    form.resetFields();
+    setIsDrawerOpen(true);
+  };
+
+  // đóng drawer
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedUser(null);
+  };
+
+  // submit form
+  const handleSubmit = async (values) => {
+    try {
+      if (selectedUser) {
+        await axios.put(`/api/users/${selectedUser._id}`, values);
+      } else {
+        await axios.post("/api/users", values);
+      }
+      fetchUsers();
+      setIsDrawerOpen(false);
+    } catch (err) {
+      console.error("Lỗi khi lưu user:", err);
+    }
+  };
+
+  // xóa user
+  const handleDelete = (user) => {
+    confirm({
+      title: "Bạn có chắc muốn xóa người dùng này?",
+      content: user.email,
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          await axios.delete(`/api/users/${user._id}`);
+          fetchUsers();
+        } catch (err) {
+          console.error("Lỗi khi xóa user:", err);
+        }
+      },
+    });
+  };
+
+  // lọc dữ liệu theo role
+  const filteredUsers = users.filter((u) => {
+    const matchSearch =
+      search === "" ||
+      u.name?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase());
+    const matchRole = filterRole === "all" || u.role === filterRole;
+    return matchSearch && matchRole;
+  });
+
+  // cấu hình cột Table
+  const columns = [
+    {
+      title: "Tên người dùng",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (r) => <Tag color="blue">{r}</Tag>,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "isDeleted",
+      key: "isDeleted",
+      render: (isDeleted) =>
+        isDeleted ? (
+          <Tag color="red">Đã xóa</Tag>
+        ) : (
+          <Tag color="green">Hoạt động</Tag>
+        ),
+    },
+    {
+      title: "Hành động",
+      key: "action",
+      render: (_, record) => (
+        <Space>
+          <Button type="link" onClick={() => handleEdit(record)}>
+            ✏️ Sửa
+          </Button>
+          <Button danger type="link" onClick={() => handleDelete(record)}>
+            🗑️ Xóa
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+    <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-4">
+      <h1 className="text-3xl font-bold text-center mb-8">Admin Users</h1>
+
+      {/* Thanh action */}
+      <div className="flex justify-between mb-4">
+        <Space>
+          <Select
+            value={filterRole}
+            onChange={setFilterRole}
+            style={{ width: 160 }}
+          >
+            <Option value="all">-- Tất cả role --</Option>
+            <Option value="admin">Admin</Option>
+            <Option value="user">User</Option>
+          </Select>
+          <Search
+            placeholder="Tìm theo tên hoặc email..."
+            allowClear
+            onSearch={(value) => setSearch(value)}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: 250 }}
+          />
+        </Space>
+
+        <Space>
+          <Button type="primary" onClick={handleCreateNew}>
+            ➕ Tạo mới
+          </Button>
+          <Button>📥 Import</Button>
+          <Button>📤 Export</Button>
+        </Space>
+      </div>
+
+      {/* Bảng dữ liệu */}
+      <Table
+        columns={columns}
+        dataSource={filteredUsers}
+        rowKey="_id"
+        loading={loading}
+        pagination={{ pageSize: 5 }}
+      />
+
+      {/* Drawer Form */}
+      <Drawer
+        title={selectedUser ? "Chỉnh sửa User" : "Tạo mới User"}
+        width={480}
+        onClose={handleCloseDrawer}
+        open={isDrawerOpen}
+        bodyStyle={{ paddingBottom: 80 }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{ isDeleted: false, role: "user" }}
+        >
+          <Form.Item
+            name="name"
+            label="Tên người dùng"
+            rules={[{ required: true, message: "Nhập tên người dùng" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Nhập email" }]}
+          >
+            <Input type="email" />
+          </Form.Item>
+
+          <Form.Item name="role" label="Role">
+            <Select>
+              <Option value="admin">Admin</Option>
+              <Option value="user">User</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="isDeleted"
+            label="Trạng thái"
+            valuePropName="checked"
+          >
+            <Switch checkedChildren="Hoạt động" unCheckedChildren="Đã xóa" />
+          </Form.Item>
+
+          <div className="flex justify-end gap-2">
+            <Button onClick={handleCloseDrawer}>Hủy</Button>
+            <Button type="primary" htmlType="submit">
+              Lưu
+            </Button>
+          </div>
+        </Form>
+      </Drawer>
+    </div>
+  );
 }
 
 export default AdminUsersList;
