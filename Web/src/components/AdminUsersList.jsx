@@ -70,7 +70,7 @@ function AdminUsersList() {
       if (selectedUser) {
         await axios.put(`/api/users/${selectedUser._id}`, values);
       } else {
-        await axios.post("/api/users", values);
+        await axios.post("/api/users/register", values);
       }
       fetchUsers();
       setIsDrawerOpen(false);
@@ -119,6 +119,11 @@ function AdminUsersList() {
       title: "Email",
       dataIndex: "email",
       key: "email",
+    },
+    {
+      title: "Password",
+      dataIndex: "password",
+      key: "password",
     },
     {
       title: "Role",
@@ -224,6 +229,14 @@ function AdminUsersList() {
             rules={[{ required: true, message: "Nhập email" }]}
           >
             <Input type="email" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ required: true, message: "Nhập password" }]}
+          >
+            <Input.Password />
           </Form.Item>
 
           <Form.Item name="role" label="Role">

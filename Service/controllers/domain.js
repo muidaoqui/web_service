@@ -90,14 +90,14 @@ const domainController = {
     },
 
     delete: async (req, res) => {
-        try {
-            const deletedDomain = await DomainModel.findByIdAndDelete(req.params.id);
-            if (!deletedDomain) return sendResponse(res, 404, false, 'Domain not found');
-            return sendResponse(res, 200, true, 'Deleted successfully');
-        } catch (error) {
-            return sendResponse(res, 500, false, error.message);
-        }
+    try {
+        const deleted = await DomainModel.findByIdAndDelete(req.params.id);
+        if (!deleted) return sendResponse(res, 404, false, "Domain not found");
+        return sendResponse(res, 200, true, "Deleted successfully", deleted);
+    } catch (error) {
+        return sendResponse(res, 500, false, error.message);
     }
+}
 };
 
 export default domainController;

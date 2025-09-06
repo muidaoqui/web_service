@@ -68,7 +68,7 @@ function AdminHosting() {
       } else {
         await axios.post("/api/hostings", values);
       }
-      fetchHostings(type, search);
+      fetchHostings();
       setIsDrawerOpen(false);
     } catch (err) {
       console.error("Lỗi khi lưu hosting:", err);
@@ -253,13 +253,15 @@ function AdminHosting() {
             <Input />
           </Form.Item>
 
-          <Form.Item name="price" label="Đơn giá">
-            <Input />
+          <Form.Item name="price" label="Đơn giá" rules={[{ required: true, message: "Nhập đơn giá" }]}>
+            <Input type="number" />
           </Form.Item>
 
           <Form.Item name="backup" label="Backup">
             <Input />
           </Form.Item>
+
+          
 
           <Form.Item name="type" label="Loại gói">
             <Select>

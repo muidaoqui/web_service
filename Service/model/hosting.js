@@ -8,7 +8,7 @@ const hostingSchema = new mongoose.Schema({
     mysql: { type: String, required: true },
     email: { type: String, required: true },
     backup: { type: String, default: "Miễn phí" },
-    yearly: { type: String, required: true },
+    yearly: { type: Number, default: function() { return this.price * 12; } }, // giá theo năm
     type: { type: String, enum: ['thuongmai', 'vip', 'phothong'], required: true }
 }, { timestamps: true });
 

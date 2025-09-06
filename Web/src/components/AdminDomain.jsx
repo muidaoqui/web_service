@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Table,
-  Tag,
-  Button,
-  Space,
-  Modal,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Switch,
-} from "antd";
+import { Table, Tag, Button, Space, Modal, Drawer, Form, Input, Select, Switch, message} from "antd";
 
 const { Option } = Select;
 const { confirm } = Modal;
+const { Search } = Input;
 
 function AdminDomain() {
   const [domains, setDomains] = useState([]);
@@ -24,9 +14,8 @@ function AdminDomain() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [filterType, setFilterType] = useState("all");
   const [form] = Form.useForm();
-  const { Search } = Input;
 
-  // fetch API
+  // Fetch domains
   const fetchDomains = async () => {
     setLoading(true);
     try {
@@ -44,27 +33,28 @@ function AdminDomain() {
     fetchDomains();
   }, []);
 
-  // mở form sửa
+  // Edit domain
   const handleEdit = (domain) => {
     setSelectedDomain(domain);
     form.setFieldsValue(domain);
     setIsDrawerOpen(true);
   };
 
-  // mở form thêm mới
+  // Create new domain
   const handleCreateNew = () => {
     setSelectedDomain(null);
     form.resetFields();
     setIsDrawerOpen(true);
+
   };
 
-  // đóng drawer
+  // Close drawer
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedDomain(null);
   };
 
-  // submit form
+  // Submit form
   const handleSubmit = async (values) => {
     try {
       if (selectedDomain) {
@@ -79,48 +69,41 @@ function AdminDomain() {
     }
   };
 
-  // xóa
+  // Delete domain
   const handleDelete = (domain) => {
-    confirm({
-      title: "Bạn có chắc muốn xóa domain này?",
-      content: domain.name,
-      okText: "Xóa",
-      okType: "danger",
-      cancelText: "Hủy",
-      onOk: async () => {
-        try {
-          await axios.delete(`/api/domains/${domain._id}`);
-          fetchDomains();
-        } catch (err) {
-          console.error("Lỗi khi xóa domain:", err);
+  confirm({
+    title: "Bạn có chắc muốn xóa domain này?",
+    content: domain.name,
+    okText: "Xóa",
+    okType: "danger",
+    cancelText: "Hủy",
+    onOk: async () => {
+      try {
+        if (!domain._id) {
+          message.error("Domain không có _id");
+          return;
         }
-      },
-    });
-  };
+        const res = await axios.delete(`/api/domains/${domain._id}`);
+        message.success(res.data.message || "Xóa thành công");
+        fetchDomains();
+      } catch (err) {
+        message.error("Xóa thất bại");
+        console.error("Lỗi khi xóa domain:", err);
+      }
+    },
+  });
+};
 
-  // lọc dữ liệu theo type
-  const filteredDomains =
-    filterType === "all"
-      ? domains
-      : domains.filter((d) => d.type === filterType);
+  // Filter domains
+  const filteredDomains = domains
+    .filter((d) => filterType === "all" || d.type === filterType)
+    .filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
 
-  // cấu hình cột Table
+  // Table columns
   const columns = [
-    {
-      title: "Tên miền",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Đơn giá",
-      dataIndex: "newPrice",
-      key: "newPrice",
-    },
-    {
-      title: "Gia hạn",
-      dataIndex: "renewPrice",
-      key: "renewPrice",
-    },
+    { title: "Tên miền", dataIndex: "name", key: "name" },
+    { title: "Đơn giá", dataIndex: "newPrice", key: "newPrice" },
+    { title: "Gia hạn", dataIndex: "renewPrice", key: "renewPrice" },
     {
       title: "Loại",
       dataIndex: "type",
@@ -132,23 +115,15 @@ function AdminDomain() {
       dataIndex: "isDeleted",
       key: "isDeleted",
       render: (isDeleted) =>
-        isDeleted ? (
-          <Tag color="red">Đã xóa</Tag>
-        ) : (
-          <Tag color="green">Hoạt động</Tag>
-        ),
+        isDeleted ? <Tag color="red">Đã xóa</Tag> : <Tag color="green">Hoạt động</Tag>,
     },
     {
       title: "Hành động",
       key: "action",
       render: (_, record) => (
         <Space>
-          <Button type="link" onClick={() => handleEdit(record)}>
-            ✏️ Sửa
-          </Button>
-          <Button danger type="link" onClick={() => handleDelete(record)}>
-            🗑️ Xóa
-          </Button>
+          <Button type="link" onClick={() => handleEdit(record)}>✏️ Sửa</Button>
+          <Button danger type="link" onClick={() => handleDelete(record)}>🗑️ Xóa</Button>
         </Space>
       ),
     },
@@ -158,14 +133,10 @@ function AdminDomain() {
     <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-4">
       <h1 className="text-3xl font-bold text-center mb-8">Admin Domain</h1>
 
-      {/* Thanh action */}
+      {/* Action bar */}
       <div className="flex justify-between mb-4">
         <Space>
-          <Select
-            value={filterType}
-            onChange={setFilterType}
-            style={{ width: 160 }}
-          >
+          <Select value={filterType} onChange={setFilterType} style={{ width: 160 }}>
             <Option value="all">-- Tất cả loại --</Option>
             <Option value="qt">Quốc tế</Option>
             <Option value="vn">.VN</Option>
@@ -174,23 +145,19 @@ function AdminDomain() {
           <Search
             placeholder="Tìm theo tên gói..."
             allowClear
-            onSearch={(value) => setSearch(value)}
+            onSearch={setSearch}
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: 250 }}
           />
-          
         </Space>
-
         <Space>
-          <Button type="primary" onClick={handleCreateNew}>
-            ➕ Tạo mới
-          </Button>
+          <Button type="primary" onClick={handleCreateNew}>➕ Tạo mới</Button>
           <Button>📥 Import</Button>
           <Button>📤 Export</Button>
         </Space>
       </div>
 
-      {/* Bảng dữ liệu */}
+      {/* Data table */}
       <Table
         columns={columns}
         dataSource={filteredDomains}
@@ -220,7 +187,6 @@ function AdminDomain() {
           >
             <Input />
           </Form.Item>
-
           <Form.Item
             name="newPrice"
             label="Đơn giá"
@@ -228,7 +194,6 @@ function AdminDomain() {
           >
             <Input />
           </Form.Item>
-
           <Form.Item
             name="renewPrice"
             label="Gia hạn"
@@ -236,7 +201,6 @@ function AdminDomain() {
           >
             <Input />
           </Form.Item>
-
           <Form.Item name="type" label="Loại">
             <Select placeholder="Chọn loại domain">
               <Option value="qt">Quốc tế</Option>
@@ -244,28 +208,20 @@ function AdminDomain() {
               <Option value="khac">Khác</Option>
             </Select>
           </Form.Item>
-
           <Form.Item
             name="isDeleted"
             label="Trạng thái"
             valuePropName="checked"
           >
-            <Switch
-              checkedChildren="Hoạt động"
-              unCheckedChildren="Đã xóa"
-            />
+            <Switch checkedChildren="Hoạt động" unCheckedChildren="Đã xóa" />
           </Form.Item>
-
           <div className="flex justify-end gap-2">
             <Button onClick={handleCloseDrawer}>Hủy</Button>
-            <Button type="primary" htmlType="submit">
-              Lưu
-            </Button>
+            <Button type="primary" htmlType="submit">Lưu</Button>
           </div>
         </Form>
       </Drawer>
     </div>
   );
 }
-
 export default AdminDomain;

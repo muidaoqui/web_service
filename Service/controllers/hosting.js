@@ -9,19 +9,16 @@ const sendResponse = (res, status, success, message, data = null) => {
 
 // Validate input
 const validateHostingInput = (body, isUpdate = false) => {
-    const { name, price, dungluong, subdomain, mysql, email, yearly, type } = body;
+    const { name, price, dungluong, subdomain, mysql, email, type } = body;
 
     if (!isUpdate) {
-        if (!name || price == null || !dungluong || !subdomain || !mysql || !email || !yearly || !type) {
+        if (!name || price == null || !dungluong || !subdomain || !mysql || !email || !type) {
             return "All required fields must be provided!";
         }
     }
 
     if (price != null && (isNaN(price) || Number(price) <= 0)) {
         return "Price must be greater than 0";
-    }
-    if (yearly != null && (isNaN(yearly) || Number(yearly) <= 0)) {
-        return "Yearly price must be greater than 0";
     }
     return null;
 };
@@ -80,6 +77,10 @@ const hostingController = {
     // UPDATE
     update: async (req, res) => {
         try {
+            const existedName = await HostingModel.findOne({ name: req.body.name, _id: { $ne: req.params.id } });
+            if (existedName) {
+                return sendResponse(res, 409, false, "Hosting name already exists!");
+            }
             const error = validateHostingInput(req.body, true);
             if (error) return sendResponse(res, 400, false, error);
 
