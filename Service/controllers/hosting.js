@@ -9,10 +9,10 @@ const sendResponse = (res, status, success, message, data = null) => {
 
 // Validate input
 const validateHostingInput = (body, isUpdate = false) => {
-    const { name, price, dungluong, subdomain, mysql, email, type } = body;
+    const { userId, name, price, dungluong, subdomain, mysql, email, type } = body;
 
     if (!isUpdate) {
-        if (!name || price == null || !dungluong || !subdomain || !mysql || !email || !type) {
+        if (!userId || !name || price == null || !dungluong || !subdomain || !mysql || !email || !type) {
             return "All required fields must be provided!";
         }
     }

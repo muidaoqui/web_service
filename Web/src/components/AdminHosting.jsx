@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api"; // axios instance
 import {
   Table,
   Drawer,
@@ -11,6 +11,7 @@ import {
   Space,
   Tag,
   Modal,
+  message,
 } from "antd";
 
 const { Option } = Select;
@@ -21,16 +22,17 @@ function AdminHosting() {
   const [hostings, setHostings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState("");
-  const [search, setSearch] = useState(""); // ô search theo tên
+  const [search, setSearch] = useState("");
   const [selectedHosting, setSelectedHosting] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [form] = Form.useForm();
 
+  // Fetch hostings
   const fetchHostings = async (selectedType = "", keyword = "") => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/hostings", {
-        params: { type: selectedType, name: keyword }, // truyền query type + name
+      const res = await api.get("/hostings", {
+        params: { type: selectedType, name: keyword },
       });
       if (Array.isArray(res.data.data?.hostings)) {
         setHostings(res.data.data.hostings);
@@ -39,42 +41,55 @@ function AdminHosting() {
       }
     } catch (err) {
       console.error("Lỗi khi fetch hostings:", err);
+      message.error("Không thể tải danh sách hosting");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchHostings(type, search);
+  }, [type, search]);
+
+  // Row click -> edit
   const handleRowClick = (hosting) => {
     setSelectedHosting(hosting);
     form.setFieldsValue(hosting);
     setIsDrawerOpen(true);
   };
 
+  // Create new
   const handleCreateNew = () => {
     setSelectedHosting(null);
     form.resetFields();
     setIsDrawerOpen(true);
   };
 
+  // Close drawer
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedHosting(null);
   };
 
+  // Submit form
   const handleSubmit = async (values) => {
     try {
       if (selectedHosting) {
-        await axios.put(`/api/hostings/${selectedHosting._id}`, values);
+        await api.put(`/hostings/${selectedHosting._id}`, values);
+        message.success("Cập nhật thành công");
       } else {
-        await axios.post("/api/hostings", values);
+        await api.post("/hostings", values);
+        message.success("Tạo mới thành công");
       }
-      fetchHostings();
+      fetchHostings(type, search);
       setIsDrawerOpen(false);
     } catch (err) {
       console.error("Lỗi khi lưu hosting:", err);
+      message.error("Lưu hosting thất bại");
     }
   };
 
+  // Delete hosting
   const handleDelete = (hosting) => {
     confirm({
       title: "Bạn có chắc muốn xóa gói hosting này?",
@@ -84,58 +99,28 @@ function AdminHosting() {
       cancelText: "Hủy",
       onOk: async () => {
         try {
-          await axios.delete(`/api/hostings/${hosting._id}`);
+          await api.delete(`/hostings/${hosting._id}`);
+          message.success("Xóa thành công");
           fetchHostings(type, search);
         } catch (err) {
           console.error("Lỗi khi xóa hosting:", err);
+          message.error("Xóa thất bại");
         }
       },
     });
   };
 
-  useEffect(() => {
-    fetchHostings(type, search);
-  }, [type, search]);
-
-  // Cột Table
+  // Table columns
   const columns = [
+    { title: "Gói Hosting", dataIndex: "name", key: "name" },
+    { title: "Dung lượng", dataIndex: "dungluong", key: "dungluong" },
+    { title: "Băng thông", dataIndex: "subdomain", key: "subdomain" },
+    { title: "MySQL", dataIndex: "mysql", key: "mysql" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Đơn giá", dataIndex: "price", key: "price" },
+    { title: "Backup", dataIndex: "backup", key: "backup" },
     {
-      title: "Gói Hosting",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Dung lượng",
-      dataIndex: "dungluong",
-      key: "dungluong",
-    },
-    {
-      title: "Băng thông",
-      dataIndex: "subdomain",
-      key: "subdomain",
-    },
-    {
-      title: "MySQL",
-      dataIndex: "mysql",
-      key: "mysql",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Đơn giá",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Backup",
-      dataIndex: "backup",
-      key: "backup",
-    },
-    {
-      title: "Type",
+      title: "Loại",
       dataIndex: "type",
       key: "type",
       render: (t) => {
@@ -175,7 +160,7 @@ function AdminHosting() {
     <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-4">
       <h1 className="text-3xl font-bold text-center mb-8">Admin Hosting</h1>
 
-      {/* Bộ lọc + nút + search */}
+      {/* Action bar */}
       <div className="flex justify-between mb-4">
         <div>
           <Button type="primary" onClick={handleCreateNew} className="mr-2">
@@ -206,7 +191,7 @@ function AdminHosting() {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Data table */}
       <Table
         columns={columns}
         dataSource={hostings}
@@ -253,15 +238,17 @@ function AdminHosting() {
             <Input />
           </Form.Item>
 
-          <Form.Item name="price" label="Đơn giá" rules={[{ required: true, message: "Nhập đơn giá" }]}>
+          <Form.Item
+            name="price"
+            label="Đơn giá"
+            rules={[{ required: true, message: "Nhập đơn giá" }]}
+          >
             <Input type="number" />
           </Form.Item>
 
           <Form.Item name="backup" label="Backup">
             <Input />
           </Form.Item>
-
-          
 
           <Form.Item name="type" label="Loại gói">
             <Select>

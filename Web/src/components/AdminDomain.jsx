@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Table, Tag, Button, Space, Modal, Drawer, Form, Input, Select, Switch, message} from "antd";
+import api from "../utils/api";
+import {
+  Table,
+  Tag,
+  Button,
+  Space,
+  Modal,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  Switch,
+  message,
+} from "antd";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -19,11 +31,12 @@ function AdminDomain() {
   const fetchDomains = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/domains");
+      const res = await api.get("/domains");
       const data = res.data.data || res.data || [];
       setDomains(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Lỗi khi fetch domains:", err);
+      message.error("Không thể tải danh sách domain");
     } finally {
       setLoading(false);
     }
@@ -45,7 +58,6 @@ function AdminDomain() {
     setSelectedDomain(null);
     form.resetFields();
     setIsDrawerOpen(true);
-
   };
 
   // Close drawer
@@ -58,43 +70,46 @@ function AdminDomain() {
   const handleSubmit = async (values) => {
     try {
       if (selectedDomain) {
-        await axios.put(`/api/domains/${selectedDomain._id}`, values);
+        await api.put(`/domains/${selectedDomain._id}`, values);
+        message.success("Cập nhật thành công");
       } else {
-        await axios.post("/api/domains", values);
+        await api.post("/domains", values);
+        message.success("Tạo mới thành công");
       }
       fetchDomains();
       setIsDrawerOpen(false);
     } catch (err) {
       console.error("Lỗi khi lưu domain:", err);
+      message.error("Lưu domain thất bại");
     }
   };
 
   // Delete domain
   const handleDelete = (domain) => {
-  confirm({
-    title: "Bạn có chắc muốn xóa domain này?",
-    content: domain.name,
-    okText: "Xóa",
-    okType: "danger",
-    cancelText: "Hủy",
-    onOk: async () => {
-      try {
-        if (!domain._id) {
-          message.error("Domain không có _id");
-          return;
+    confirm({
+      title: "Bạn có chắc muốn xóa domain này?",
+      content: domain.name,
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          if (!domain._id) {
+            message.error("Domain không có _id");
+            return;
+          }
+          const res = await api.delete(`/domains/${domain._id}`);
+          message.success(res.data.message || "Xóa thành công");
+          fetchDomains();
+        } catch (err) {
+          message.error("Xóa thất bại");
+          console.error("Lỗi khi xóa domain:", err);
         }
-        const res = await axios.delete(`/api/domains/${domain._id}`);
-        message.success(res.data.message || "Xóa thành công");
-        fetchDomains();
-      } catch (err) {
-        message.error("Xóa thất bại");
-        console.error("Lỗi khi xóa domain:", err);
-      }
-    },
-  });
-};
+      },
+    });
+  };
 
-  // Filter domains
+  // Filter + search
   const filteredDomains = domains
     .filter((d) => filterType === "all" || d.type === filterType)
     .filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
@@ -115,15 +130,23 @@ function AdminDomain() {
       dataIndex: "isDeleted",
       key: "isDeleted",
       render: (isDeleted) =>
-        isDeleted ? <Tag color="red">Đã xóa</Tag> : <Tag color="green">Hoạt động</Tag>,
+        isDeleted ? (
+          <Tag color="red">Đã xóa</Tag>
+        ) : (
+          <Tag color="green">Hoạt động</Tag>
+        ),
     },
     {
       title: "Hành động",
       key: "action",
       render: (_, record) => (
         <Space>
-          <Button type="link" onClick={() => handleEdit(record)}>✏️ Sửa</Button>
-          <Button danger type="link" onClick={() => handleDelete(record)}>🗑️ Xóa</Button>
+          <Button type="link" onClick={() => handleEdit(record)}>
+            ✏️ Sửa
+          </Button>
+          <Button danger type="link" onClick={() => handleDelete(record)}>
+            🗑️ Xóa
+          </Button>
         </Space>
       ),
     },
@@ -136,14 +159,18 @@ function AdminDomain() {
       {/* Action bar */}
       <div className="flex justify-between mb-4">
         <Space>
-          <Select value={filterType} onChange={setFilterType} style={{ width: 160 }}>
+          <Select
+            value={filterType}
+            onChange={setFilterType}
+            style={{ width: 160 }}
+          >
             <Option value="all">-- Tất cả loại --</Option>
             <Option value="qt">Quốc tế</Option>
             <Option value="vn">.VN</Option>
             <Option value="khac">Khác</Option>
           </Select>
           <Search
-            placeholder="Tìm theo tên gói..."
+            placeholder="Tìm theo tên miền..."
             allowClear
             onSearch={setSearch}
             onChange={(e) => setSearch(e.target.value)}
@@ -151,7 +178,9 @@ function AdminDomain() {
           />
         </Space>
         <Space>
-          <Button type="primary" onClick={handleCreateNew}>➕ Tạo mới</Button>
+          <Button type="primary" onClick={handleCreateNew}>
+            ➕ Tạo mới
+          </Button>
           <Button>📥 Import</Button>
           <Button>📤 Export</Button>
         </Space>
@@ -192,14 +221,14 @@ function AdminDomain() {
             label="Đơn giá"
             rules={[{ required: true, message: "Nhập đơn giá" }]}
           >
-            <Input />
+            <Input type="number" />
           </Form.Item>
           <Form.Item
             name="renewPrice"
             label="Gia hạn"
             rules={[{ required: true, message: "Nhập giá gia hạn" }]}
           >
-            <Input />
+            <Input type="number" />
           </Form.Item>
           <Form.Item name="type" label="Loại">
             <Select placeholder="Chọn loại domain">
@@ -208,20 +237,19 @@ function AdminDomain() {
               <Option value="khac">Khác</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name="isDeleted"
-            label="Trạng thái"
-            valuePropName="checked"
-          >
+          <Form.Item name="isDeleted" label="Trạng thái" valuePropName="checked">
             <Switch checkedChildren="Hoạt động" unCheckedChildren="Đã xóa" />
           </Form.Item>
           <div className="flex justify-end gap-2">
             <Button onClick={handleCloseDrawer}>Hủy</Button>
-            <Button type="primary" htmlType="submit">Lưu</Button>
+            <Button type="primary" htmlType="submit">
+              Lưu
+            </Button>
           </div>
         </Form>
       </Drawer>
     </div>
   );
 }
+
 export default AdminDomain;

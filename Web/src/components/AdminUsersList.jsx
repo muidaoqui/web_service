@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api"; // axios instance
 import {
   Table,
   Tag,
@@ -11,6 +11,7 @@ import {
   Input,
   Select,
   Switch,
+  message,
 } from "antd";
 
 const { Option } = Select;
@@ -26,15 +27,16 @@ function AdminUsersList() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [form] = Form.useForm();
 
-  // fetch API
+  // Fetch users
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/users");
+      const res = await api.get("/users");
       const data = res.data.data || res.data || [];
       setUsers(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Lỗi khi fetch users:", err);
+      message.error("Không thể tải danh sách user");
     } finally {
       setLoading(false);
     }
@@ -44,42 +46,45 @@ function AdminUsersList() {
     fetchUsers();
   }, []);
 
-  // mở form sửa
+  // Edit user
   const handleEdit = (user) => {
     setSelectedUser(user);
     form.setFieldsValue(user);
     setIsDrawerOpen(true);
   };
 
-  // mở form thêm mới
+  // Create new user
   const handleCreateNew = () => {
     setSelectedUser(null);
     form.resetFields();
     setIsDrawerOpen(true);
   };
 
-  // đóng drawer
+  // Close drawer
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedUser(null);
   };
 
-  // submit form
+  // Submit form
   const handleSubmit = async (values) => {
     try {
       if (selectedUser) {
-        await axios.put(`/api/users/${selectedUser._id}`, values);
+        await api.put(`/users/${selectedUser._id}`, values);
+        message.success("Cập nhật thành công");
       } else {
-        await axios.post("/api/users/register", values);
+        await api.post("/users/register", values);
+        message.success("Tạo mới thành công");
       }
       fetchUsers();
       setIsDrawerOpen(false);
     } catch (err) {
       console.error("Lỗi khi lưu user:", err);
+      message.error("Lưu user thất bại");
     }
   };
 
-  // xóa user
+  // Delete user
   const handleDelete = (user) => {
     confirm({
       title: "Bạn có chắc muốn xóa người dùng này?",
@@ -89,16 +94,18 @@ function AdminUsersList() {
       cancelText: "Hủy",
       onOk: async () => {
         try {
-          await axios.delete(`/api/users/${user._id}`);
+          await api.delete(`/users/${user._id}`);
+          message.success("Xóa thành công");
           fetchUsers();
         } catch (err) {
           console.error("Lỗi khi xóa user:", err);
+          message.error("Xóa user thất bại");
         }
       },
     });
   };
 
-  // lọc dữ liệu theo role
+  // Filter users
   const filteredUsers = users.filter((u) => {
     const matchSearch =
       search === "" ||
@@ -108,28 +115,21 @@ function AdminUsersList() {
     return matchSearch && matchRole;
   });
 
-  // cấu hình cột Table
+  // Table columns
   const columns = [
-    {
-      title: "Tên người dùng",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
+    { title: "Tên người dùng", dataIndex: "name", key: "name" },
+    { title: "Email", dataIndex: "email", key: "email" },
     {
       title: "Password",
       dataIndex: "password",
       key: "password",
+      render: () => "••••••", // ẩn mật khẩu
     },
     {
       title: "Role",
       dataIndex: "role",
       key: "role",
-      render: (r) => <Tag color="blue">{r}</Tag>,
+      render: (r) => <Tag color={r === "admin" ? "red" : "blue"}>{r}</Tag>,
     },
     {
       title: "Trạng thái",
@@ -162,7 +162,7 @@ function AdminUsersList() {
     <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-4">
       <h1 className="text-3xl font-bold text-center mb-8">Admin Users</h1>
 
-      {/* Thanh action */}
+      {/* Action bar */}
       <div className="flex justify-between mb-4">
         <Space>
           <Select
@@ -192,7 +192,7 @@ function AdminUsersList() {
         </Space>
       </div>
 
-      {/* Bảng dữ liệu */}
+      {/* Data table */}
       <Table
         columns={columns}
         dataSource={filteredUsers}

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const hostingSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true, unique: true },
     price: { type: Number, required: true }, // giá theo tháng
     dungluong: { type: String, required: true },
