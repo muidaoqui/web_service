@@ -1,6 +1,8 @@
 import User from "../model/users.js";
 import { parseApiKey } from "../utils/apiKey.js";
+import jwt from "jsonwebtoken";
 
+const ACCESS_SECRET = process.env.ACCESS_SECRET || "myaccesssecret";
 /**
  * Middleware xác thực apiKey (user đã đăng nhập)
  */
@@ -66,4 +68,27 @@ export function requireUser(req, res, next) {
     return res.status(403).json({ message: "Forbidden: Users only" });
   }
   next();
+}
+
+// Middleware xác thực user
+export function requireAuth(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Access token missing" });
+
+  jwt.verify(token, ACCESS_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: "Invalid or expired token" });
+    req.user = user; // { id, email, role }
+    next();
+  });
+}
+
+// Middleware kiểm tra role
+export function requireRole(roles = []) {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Forbidden: insufficient role" });
+    }
+    next();
+  };
 }

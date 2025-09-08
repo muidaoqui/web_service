@@ -1,5 +1,6 @@
 import UserModel from "../model/users.js";
 import bcrypt from "bcryptjs";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import { buildApiKey } from "../utils/apiKey.js";
 
 export const authRegister = async (req, res) => {
@@ -45,19 +46,34 @@ export const authLogin = async (req, res) => {
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ message: "Invalid email or password" });
 
-    const apiKey = buildApiKey(user._id.toString(), user.email);
-    user.currentApiKey = apiKey;
-    await user.save();
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     return res.json({
       message: "Login successful",
-      apiKey,
-      name: user.name,
-      role: user.role
+      accessToken,
+      refreshToken,
+      user: { id: user._id, name: user.name, role: user.role }
     });
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: "Refresh token required" });
+
+    const decoded = verifyRefreshToken(token);
+    const user = await UserModel.findById(decoded.id);
+    if (!user) return res.status(401).json({ message: "Invalid refresh token" });
+
+    const newAccessToken = generateAccessToken(user);
+    return res.json({ accessToken: newAccessToken });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid or expired refresh token" });
   }
 };
 

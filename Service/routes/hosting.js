@@ -1,6 +1,6 @@
 import express from "express";
 import hostingController from "../controllers/hosting.js";
-import { requireApiKey, requireAdmin } from "../middlewares/auth.js";
+import { requireAuth, requireRole } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -15,8 +15,8 @@ router.get("/", hostingController.getAll);
 router.get("/:id", hostingController.getById);
 
 // Admin CRUD hosting
-router.post("/", requireApiKey, requireAdmin, hostingController.create);
-router.put("/:id", requireApiKey, requireAdmin, hostingController.update);
-router.delete("/:id", requireApiKey, requireAdmin, hostingController.delete);
+router.post("/", requireAuth, requireRole(["admin"]), hostingController.create);
+router.put("/:id", requireAuth, requireRole(["admin"]), hostingController.update);
+router.delete("/:id", requireAuth, requireRole(["admin"]), hostingController.delete);
 
 export default router;

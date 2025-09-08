@@ -1,6 +1,6 @@
 import express from "express";
 import domainController from "../controllers/domain.js";
-import { requireApiKey, requireAdmin  } from "../middlewares/auth.js"; 
+import { requireApiKey, requireAdmin, requireAuth, requireRole  } from "../middlewares/auth.js"; 
 
 const router = express.Router();
 
@@ -9,8 +9,8 @@ router.get("/", domainController.getAll);
 router.get("/:id", domainController.getById);
 
 // Admin (cần login + role admin)
-router.post("/", requireApiKey, requireAdmin, domainController.create);
-router.put("/:id", requireApiKey, requireAdmin, domainController.update);
-router.delete("/:id", requireApiKey, requireAdmin, domainController.delete);
+router.post("/", requireAuth, requireRole(["admin"]), domainController.create);
+router.put("/:id", requireAuth, requireRole(["admin"]), domainController.update);
+router.delete("/:id", requireAuth, requireRole(["admin"]), domainController.delete);
 
 export default router;
