@@ -2,17 +2,49 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import { FaRegEye } from 'react-icons/fa';
+import axios from "axios";
 
 function Login() {
-    const [email, setEmail] = useState('');
+    const BASE_URL = "http://localhost:5000";
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const [pass, setPass] = useState('');
     const [message, setMessage] = useState('');
     const [msgColor, setMsgColor] = useState('cyan');
     const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        try {
+            const res = await axios.post(`${BASE_URL}/api/users/login`, {
+                email,
+                password,
+            });
+
+            if (res.data.apiKey) {
+                // Lưu apiKey vào localStorage
+                localStorage.setItem("apiKey", res.data.apiKey);
+                localStorage.setItem("role", res.data.role);
+                navigate("/home");
+            } else {
+                setError("Không nhận được apiKey từ server");
+            }
+        } catch (err) {
+            console.error("Login error:", err);
+            setError(err.response?.data?.message || "Đăng nhập thất bại");
+        } finally {
+            setLoading(false);
+        }
+    };
     function togglePassword() {
-    const input = document.getElementById("password");
-    input.type = input.type === "password" ? "text" : "password";
-  }
+        const input = document.getElementById("password");
+        input.type = input.type === "password" ? "text" : "password";
+    }
     return (
         <div className="w-full flex justify-center items-center min-h-screen bg-gray-50 px-4">
             <div className="flex flex-col md:flex-row w-full max-w-2xl overflow-hidden rounded-xl shadow-lg bg-white">
@@ -23,7 +55,7 @@ function Login() {
                 </div>
 
                 <div className="flex flex-col justify-center w-full p-6 md:p-10">
-                    <form  className="flex flex-col gap-4">
+                    <form className="flex flex-col gap-4">
                         <h1 className="text-3xl font-bold text-center text-cyan-400">Đăng Nhập</h1>
 
                         <div>
@@ -34,6 +66,7 @@ function Login() {
                                 placeholder="Nhập email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                required
                             />
                         </div>
 
@@ -45,8 +78,9 @@ function Login() {
                                     id="password"
                                     className="w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
                                     placeholder="Nhập mật khẩu"
-                                    value={pass}
-                                    onChange={(e) => setPass(e.target.value)}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
                                 />
                                 <span
                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
@@ -57,7 +91,7 @@ function Login() {
                             </div>
                         </div>
 
-                        <button type="submit" className="bg-cyan-400 hover:bg-cyan-500 text-white h-10 rounded-lg font-semibold">
+                        <button type="submit" className="bg-cyan-400 hover:bg-cyan-500 text-white h-10 rounded-lg font-semibold" onClick={handleSubmit} disabled={loading}>
                             Đăng Nhập
                         </button>
 

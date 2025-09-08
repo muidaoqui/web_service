@@ -51,7 +51,8 @@ export const authLogin = async (req, res) => {
 
     return res.json({
       message: "Login successful",
-      apiKey
+      apiKey,
+      role: user.role
     });
   } catch (err) {
     console.error("Login error:", err);
