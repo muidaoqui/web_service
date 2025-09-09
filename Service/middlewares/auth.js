@@ -1,8 +1,7 @@
 import User from "../model/users.js";
 import { parseApiKey } from "../utils/apiKey.js";
-import jwt from "jsonwebtoken";
+import { verifyAccessToken } from "../utils/jwt.js"; // 👈 dùng hàm verifyAccessToken
 
-const ACCESS_SECRET = process.env.ACCESS_SECRET || "myaccesssecret";
 /**
  * Middleware xác thực apiKey (user đã đăng nhập)
  */
@@ -44,7 +43,6 @@ export async function requireApiKey(req, res, next) {
 
 /**
  * Middleware yêu cầu role = admin
- * (chỉ gọi được sau khi đã qua requireApiKey)
  */
 export function requireAdmin(req, res, next) {
   if (!req.authUser) {
@@ -57,8 +55,7 @@ export function requireAdmin(req, res, next) {
 }
 
 /**
- * Middleware yêu cầu chỉ cần đăng nhập (role = user hoặc admin)
- * Dùng cho những API như /orders
+ * Middleware yêu cầu role = user hoặc admin
  */
 export function requireUser(req, res, next) {
   if (!req.authUser) {
@@ -70,23 +67,27 @@ export function requireUser(req, res, next) {
   next();
 }
 
-// Middleware xác thực user
-export function requireAuth(req, res, next) {
+// ✅ Middleware xác thực user bằng JWT Access Token
+export const requireAuth = (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Access token missing" });
+  if (!authHeader) return res.status(401).json({ message: "No token provided" });
 
-  jwt.verify(token, ACCESS_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Invalid or expired token" });
-    req.user = user; // { id, email, role }
+  const token = authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Invalid token format" });
+
+  try {
+    const decoded = verifyAccessToken(token); 
+    req.authUser = { id: decoded.id, email: decoded.email, role: decoded.role };
     next();
-  });
-}
+  } catch (err) {
+    return res.status(403).json({ message: "Token is not valid" });
+  }
+};
 
 // Middleware kiểm tra role
 export function requireRole(roles = []) {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.authUser.role)) {
       return res.status(403).json({ message: "Forbidden: insufficient role" });
     }
     next();

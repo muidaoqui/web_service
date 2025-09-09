@@ -1,21 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess, logout } from "../slices/authSlice";
 
 function ToolBar() {
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  // Lấy user từ Redux store
+  const { user } = useSelector((state) => state.auth);
+
+  // Khi load lại trang, đồng bộ Redux với localStorage
   useEffect(() => {
-    // Giả sử bạn lưu user sau khi login: localStorage.setItem("user", JSON.stringify(userObj));
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    if (!user) {
+      const savedUser = localStorage.getItem("user");
+      const accessToken = localStorage.getItem("accessToken");
+      if (savedUser && accessToken) {
+        dispatch(
+          loginSuccess({
+            user: JSON.parse(savedUser),
+            accessToken,
+            refreshToken: localStorage.getItem("refreshToken"),
+          })
+        );
+      }
     }
-  }, []);
+  }, [user, dispatch]);
 
   const handleProfileClick = () => {
-    navigate("/profile"); // Trang profile user
+    navigate("/profile");
+  };
+
+  const handleLogout = () => {
+    // Xóa Redux + localStorage
+    dispatch(logout());
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   return (
@@ -39,23 +62,23 @@ function ToolBar() {
         <Link to="/recruitment">TUYỂN DỤNG</Link>
       </div>
 
-      {/* Button */}
+      {/* User / Login */}
       <div>
         {user ? (
-          <button
-            className="bg-green-500 text-white py-2 px-4 rounded-xl h-16 hover:bg-green-600 transition duration-300"
-            onClick={handleProfileClick}
-          >
-            Xin chào {user.name}
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              className="bg-green-500 text-white py-2 px-4 rounded-xl h-16 hover:bg-green-600 transition duration-300"
+              onClick={handleProfileClick}
+            >
+              Xin chào {user.name}
+            </button>
+          </div>
         ) : (
           <button
             className="bg-red-500 text-white py-2 px-4 rounded-xl h-16 hover:bg-red-600 transition duration-300"
-            onClick={() =>
-              (window.location.href = "https://www.facebook.com/mui.ao.714373")
-            }
+            onClick={() => navigate("/login")}
           >
-            LIÊN HỆ TƯ VẤN
+            ĐĂNG NHẬP
           </button>
         )}
       </div>

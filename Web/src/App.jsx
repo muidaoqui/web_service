@@ -12,6 +12,7 @@ import Email from "./pages/custom/Email";
 import Login from "./pages/custom/Login";
 import Register from "./pages/custom/Register";
 import WebDesign from "./pages/custom/WebDesign";
+import Profile from "./pages/custom/Profile";
 
 // Pages (Admin)
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -52,6 +53,14 @@ function App() {
               element={
                 <ProtectedRoute roles={["user", "admin"]}>
                   <WebDesign />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute roles={["user", "admin"]}>
+                  <Profile />
                 </ProtectedRoute>
               }
             />

@@ -1,25 +1,26 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-/**
- * ProtectedRoute
- * @param {children} component cần render
- * @param {roles} mảng role được phép truy cập (vd: ["admin"], ["user"], ["admin","user"])
- */
 function ProtectedRoute({ children, roles }) {
-  const apiKey = localStorage.getItem("apiKey");
-  const userRole = localStorage.getItem("role");
+  // Lấy thông tin từ Redux
+  const { user, accessToken } = useSelector((state) => state.auth);
 
-  // chưa login
-  if (!apiKey) {
+  // Nếu Redux chưa có thì fallback từ localStorage
+  const savedUser = !user ? JSON.parse(localStorage.getItem("user")) : user;
+  const token = accessToken || localStorage.getItem("accessToken");
+
+  // Nếu chưa đăng nhập → chuyển hướng login
+  if (!savedUser || !token) {
     return <Navigate to="/login" replace />;
   }
 
-  // có login nhưng không có quyền
-  if (roles && !roles.includes(userRole)) {
-    return <Navigate to="/login" replace />;
+  // Nếu có roles và user.role không nằm trong roles → cấm truy cập
+  if (roles && !roles.includes(savedUser.role)) {
+    return <Navigate to="/home" replace />;
   }
 
+  // Nếu pass hết check thì cho render children
   return children;
 }
 
