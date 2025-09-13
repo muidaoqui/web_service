@@ -13,6 +13,7 @@ import Login from "./pages/custom/Login";
 import Register from "./pages/custom/Register";
 import WebDesign from "./pages/custom/WebDesign";
 import Profile from "./pages/custom/Profile";
+import CheckDomain from "./pages/custom/CheckDomain";
 
 // Pages (Admin)
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -64,6 +65,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/check-domain" element={<CheckDomain />} />
 
             {/* Auth pages */}
             <Route path="/login" element={<Login />} />
