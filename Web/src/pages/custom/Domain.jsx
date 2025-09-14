@@ -6,16 +6,14 @@ import Slider from "react-slick";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { FaGift } from "react-icons/fa";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 // Nút mũi tên trái
 function PrevArrow(props) {
   return (
-    <button
-      {...props}
-      className="slick-prev absolute z-10 text-red-600 -left-5"
-    >
+    <button {...props} className="slick-prev absolute z-10 text-red-600 -left-5">
       <MdKeyboardArrowLeft size={24} />
     </button>
   );
@@ -24,10 +22,7 @@ function PrevArrow(props) {
 // Nút mũi tên phải
 function NextArrow(props) {
   return (
-    <button
-      {...props}
-      className="slick-next absolute z-10 text-red-600 -right-5"
-    >
+    <button {...props} className="slick-next absolute z-10 text-red-600 -right-5">
       <MdKeyboardArrowRight size={24} />
     </button>
   );
@@ -54,18 +49,24 @@ const sliderSettings = {
 function Domain() {
   const [domains, setDomains] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
-  // Fetch API
+  // Fetch API domain price list
   useEffect(() => {
-    axios.get("/api/domains")
+    axios
+      .get("/api/domains")
       .then((res) => {
-        console.log("API domains:", res.data);
         setDomains(res.data.data || res.data || []);
       })
-
       .catch((err) => console.error("Lỗi khi fetch domain:", err))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleSearch = () => {
+    if (!query.trim()) return;
+    navigate(`/check-domain?domain=${query.trim()}`);
+  };
 
   if (loading) return <p className="text-center py-10">Đang tải...</p>;
 
@@ -73,7 +74,6 @@ function Domain() {
   const vnDomains = Array.isArray(domains) ? domains.filter((d) => d.type === "vn") : [];
   const qtDomains = Array.isArray(domains) ? domains.filter((d) => d.type === "qt") : [];
   const sliderDomains = Array.isArray(domains) ? domains.slice(0, 6) : [];
-
 
   return (
     <div className="p-4 flex flex-col justify-center items-center text-center bg-gradient-to-b from-red-50 to-white">
@@ -91,8 +91,14 @@ function Domain() {
               type="text"
               placeholder="Nhập tên miền bạn muốn tìm kiếm..."
               className="w-full px-6 h-16 focus:outline-none text-gray-700 placeholder-gray-400"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
-            <button className="bg-red-600 hover:bg-red-700 text-white px-6 h-16">
+            <button
+              className="bg-red-600 hover:bg-red-700 text-white px-6 h-16"
+              onClick={handleSearch}
+            >
               <SearchOutlined style={{ fontSize: "20px" }} />
             </button>
           </div>
@@ -126,38 +132,22 @@ function Domain() {
                 BẢNG GIÁ TÊN MIỀN VIỆT NAM
               </h2>
             </div>
-            <div className="p-4 bg-red-600 text-white text-center">
-              ĐĂNG KÝ MỚI
-            </div>
+            <div className="p-4 bg-red-600 text-white text-center">ĐĂNG KÝ MỚI</div>
             <div className="p-4 bg-red-600 text-white text-center">GIA HẠN</div>
-            <div className="p-4 bg-red-600 text-white text-center">
-              CHUYỂN VỀ
-            </div>
+            <div className="p-4 bg-red-600 text-white text-center">CHUYỂN VỀ</div>
 
             {vnDomains.map((domain, index) => (
               <React.Fragment key={domain._id}>
-                <div
-                  className={`col-span-2 p-2 font-semibold ${index % 2 ? "bg-red-50" : "bg-white"
-                    }`}
-                >
+                <div className={`col-span-2 p-2 font-semibold ${index % 2 ? "bg-red-50" : "bg-white"}`}>
                   {domain.name}
                 </div>
-                <div
-                  className={`${index % 2 ? "bg-red-50" : "bg-white"
-                    } p-2 text-red-600 font-bold`}
-                >
+                <div className={`${index % 2 ? "bg-red-50" : "bg-white"} p-2 text-red-600 font-bold`}>
                   {domain.newPrice.toLocaleString("vi-VN")}đ
                 </div>
-                <div
-                  className={`${index % 2 ? "bg-red-50" : "bg-white"
-                    } p-2 text-gray-700`}
-                >
+                <div className={`${index % 2 ? "bg-red-50" : "bg-white"} p-2 text-gray-700`}>
                   {domain.renewPrice.toLocaleString("vi-VN")}đ
                 </div>
-                <div
-                  className={`${index % 2 ? "bg-red-50" : "bg-white"
-                    } p-2 text-green-600`}
-                >
+                <div className={`${index % 2 ? "bg-red-50" : "bg-white"} p-2 text-green-600`}>
                   {domain.transfer}
                 </div>
               </React.Fragment>
@@ -174,38 +164,22 @@ function Domain() {
                 BẢNG GIÁ TÊN MIỀN QUỐC TẾ
               </h2>
             </div>
-            <div className="p-4 bg-red-600 text-white text-center">
-              ĐĂNG KÝ MỚI
-            </div>
+            <div className="p-4 bg-red-600 text-white text-center">ĐĂNG KÝ MỚI</div>
             <div className="p-4 bg-red-600 text-white text-center">GIA HẠN</div>
-            <div className="p-4 bg-red-600 text-white text-center">
-              CHUYỂN VỀ
-            </div>
+            <div className="p-4 bg-red-600 text-white text-center">CHUYỂN VỀ</div>
 
             {qtDomains.map((domain, index) => (
               <React.Fragment key={domain._id}>
-                <div
-                  className={`col-span-2 p-2 font-semibold ${index % 2 ? "bg-red-50" : "bg-white"
-                    }`}
-                >
+                <div className={`col-span-2 p-2 font-semibold ${index % 2 ? "bg-red-50" : "bg-white"}`}>
                   {domain.name}
                 </div>
-                <div
-                  className={`${index % 2 ? "bg-red-50" : "bg-white"
-                    } p-2 text-red-600 font-bold`}
-                >
+                <div className={`${index % 2 ? "bg-red-50" : "bg-white"} p-2 text-red-600 font-bold`}>
                   {domain.newPrice.toLocaleString("vi-VN")}đ
                 </div>
-                <div
-                  className={`${index % 2 ? "bg-red-50" : "bg-white"
-                    } p-2 text-gray-700`}
-                >
+                <div className={`${index % 2 ? "bg-red-50" : "bg-white"} p-2 text-gray-700`}>
                   {domain.renewPrice.toLocaleString("vi-VN")}đ
                 </div>
-                <div
-                  className={`${index % 2 ? "bg-red-50" : "bg-white"
-                    } p-2 text-green-600`}
-                >
+                <div className={`${index % 2 ? "bg-red-50" : "bg-white"} p-2 text-green-600`}>
                   {domain.transfer}
                 </div>
               </React.Fragment>

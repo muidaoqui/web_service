@@ -1,22 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function CheckDomain() {
-  const [query, setQuery] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const domain = queryParams.get("domain");
+
+  const [query, setQuery] = useState(domain || "");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
+  useEffect(() => {
+    if (domain) handleSearch(domain);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domain]);
+
+  const handleSearch = async (d) => {
+    const searchDomain = d || query;
+    if (!searchDomain.trim()) return;
 
     setLoading(true);
     setError("");
     setResults([]);
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/check-domain?domain=${query}`);
+      const res = await axios.get(`/api/check-domain?domain=${searchDomain}`);
       setResults(res.data.results || []);
     } catch (err) {
       console.error("❌ Lỗi khi check domain:", err);
@@ -24,6 +36,10 @@ function CheckDomain() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = () => {
+    navigate(`/check-domain?domain=${query.trim()}`);
   };
 
   return (
@@ -35,10 +51,11 @@ function CheckDomain() {
           placeholder="Nhập tên miền bạn muốn tìm kiếm..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           className="flex-grow px-6 h-14 focus:outline-none text-gray-700"
         />
         <button
-          onClick={handleSearch}
+          onClick={handleSubmit}
           disabled={loading}
           className="bg-green-600 hover:bg-green-700 text-white px-6 h-14 flex items-center justify-center"
         >
