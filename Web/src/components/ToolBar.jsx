@@ -72,6 +72,12 @@ function ToolBar() {
             >
               Xin chào {user.name}
             </button>
+            <button
+              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              onClick={handleLogout}
+            >
+              Đăng xuất
+            </button>
           </div>
         ) : (
           <button

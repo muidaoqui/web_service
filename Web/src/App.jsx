@@ -14,6 +14,9 @@ import Register from "./pages/custom/Register";
 import WebDesign from "./pages/custom/WebDesign";
 import Profile from "./pages/custom/Profile";
 import CheckDomain from "./pages/custom/CheckDomain";
+import DomainOrder from "./pages/custom/DomainOrder";
+import HostingOrder from "./pages/custom/HostingOrder";
+import Pay from "./pages/custom/Pay";
 
 // Pages (Admin)
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -62,6 +65,30 @@ function App() {
               element={
                 <ProtectedRoute roles={["user", "admin"]}>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/domain-order" 
+              element={
+                <ProtectedRoute roles={["user", "admin"]}>
+                  <DomainOrder />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/hosting-order" 
+              element={
+                <ProtectedRoute roles={["user", "admin"]}>
+                  <HostingOrder />
+                </ProtectedRoute>
+              } 
+            />
+            <Route
+              path="/pay"
+              element={
+                <ProtectedRoute roles={["user", "admin"]}>
+                  <Pay />
                 </ProtectedRoute>
               }
             />

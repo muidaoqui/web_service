@@ -1,6 +1,6 @@
 import React from "react";
 
-function Order() {
+function DomainOrder() {
     return (
         <div>
             <h1>Order Page</h1>
@@ -9,4 +9,4 @@ function Order() {
     );
 }
 
-export default Order;
+export default DomainOrder;

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const hostingSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true, unique: true },
-    price: { type: Number, required: true }, // giá theo tháng
+    price: { type: Number, required: true, min: 0 },
     dungluong: { type: String, required: true },
     subdomain: { type: String, required: true },
     mysql: { type: String, required: true },

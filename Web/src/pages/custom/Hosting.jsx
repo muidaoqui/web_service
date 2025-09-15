@@ -25,10 +25,12 @@ import {
   FaBinoculars,
 } from "react-icons/fa";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Hosting() {
   const [hostings, setHostings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Gọi API backend
   useEffect(() => {
@@ -48,7 +50,7 @@ function Hosting() {
   const HostingCard = ({ plan }) => (
     <div className="bg-gradient-to-b from-gray-100 to-white rounded-xl shadow-lg hover:shadow-2xl p-6 text-center border border-gray-200 transition-all duration-300 hover:-translate-y-1 h-full">
       <p className="text-2xl font-bold text-red-600 mt-2">
-        {plan.price} <span className="text-lg text-gray-700">x 12 tháng</span>
+        {plan.price.toLocaleString('vi-VN')} đ <span className="text-lg text-gray-700">/tháng</span>
       </p>
 
       <h2 className="text-xl font-bold text-green-700 mt-1">{plan.name}</h2>
@@ -93,46 +95,46 @@ function Hosting() {
       </ul>
 
       <p className="mt-4 text-sm font-semibold">
-        Chi phí/năm: <span className="text-red-500">{plan.yearly}</span>
+        Chi phí/năm: <span className="text-red-500">{plan.yearly.toLocaleString('vi-VN')} đ</span>
       </p>
 
-      <button className="mt-4 bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 hover:scale-105 transition-all duration-300">
+      <button
+        className="mt-4 bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 hover:scale-105 transition-all duration-300"
+        onClick={() => navigate("/hosting-order", { state: { plan } })}
+      >
         Đăng Ký Ngay
       </button>
     </div>
   );
 
   // Slider config (ngang)
-  // renderPlans trong Hosting.jsx
-const renderPlans = (plans) => {
-  const settings = {
-    dots: false,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    speed: 500,
-    slidesToShow: 3, // hiển thị 3 card ngang
-    slidesToScroll: 1,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 768, settings: { slidesToShow: 1 } },
-    ],
-  };
+  const renderPlans = (plans) => {
+    const settings = {
+      dots: false,
+      infinite: true,
+      autoplay: true,
+      autoplaySpeed: 3000,
+      speed: 500,
+      slidesToShow: 3, // hiển thị 3 card ngang
+      slidesToScroll: 1,
+      responsive: [
+        { breakpoint: 1024, settings: { slidesToShow: 2 } },
+        { breakpoint: 768, settings: { slidesToShow: 1 } },
+      ],
+    };
 
-  return (
-    <Slider {...settings} className="px-6">
-      {plans.map((plan, index) => (
-        <div key={index} className="px-3">
-          {/* Card KHÔNG để w-full */}
-          <div className="">
-            <HostingCard plan={plan} />
+    return (
+      <Slider {...settings} className="px-6">
+        {plans.map((plan, index) => (
+          <div key={index} className="px-3">
+            <div className="">
+              <HostingCard plan={plan} />
+            </div>
           </div>
-        </div>
-      ))}
-    </Slider>
-  );
-};
-
+        ))}
+      </Slider>
+    );
+  };
 
   const tabItems = [
     {
