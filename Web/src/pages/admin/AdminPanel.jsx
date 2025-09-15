@@ -9,30 +9,14 @@ import {
 import AdminUsersList from "../../components/AdminUsersList";
 import AdminDomain from "../../components/AdminDomain";
 import AdminHosting from "../../components/AdminHosting";
-
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28", "#AA33FF"];
 
 function AdminPanel() {
   const [domains, setDomains] = useState([]);
   const [users, setUsers] = useState([]);
   const [hostings, setHostings] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const resDomains = await axios.get("/api/domains");
-        const resUsers = await axios.get("/api/users");
-        const resHostings = await axios.get("/api/hostings");
-        setDomains(resDomains.data.data || []);
-        setUsers(resUsers.data.data || []);
-        setHostings(resHostings.data.data.hostings || []);
-      } catch (err) {
-        console.error("Lỗi fetch data:", err);
-      }
-    };
-    fetchData();
-  }, []);
-
   // --- DOMAIN DATA ---
   const domainData = [
     { name: "Quốc tế", value: domains.filter(d => d.type === "qt").length },

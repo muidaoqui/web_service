@@ -5,11 +5,11 @@ const api = axios.create({
   baseURL: "/api", // proxy tới backend
 });
 
-// Gắn apiKey cho mọi request
+// Gắn accessToken cho mọi request
 api.interceptors.request.use((config) => {
-  const apiKey = localStorage.getItem("apiKey");
-  if (apiKey) {
-    config.headers.Authorization = `Bearer ${apiKey}`;
+  const token = localStorage.getItem("accessToken"); 
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

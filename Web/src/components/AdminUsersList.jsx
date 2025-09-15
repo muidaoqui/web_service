@@ -26,17 +26,21 @@ function AdminUsersList() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [form] = Form.useForm();
+  const token = localStorage.getItem("accessToken");
 
-  // Fetch users
+  // Fetch Users
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/users");
-      const data = res.data.data || res.data || [];
-      setUsers(Array.isArray(data) ? data : []);
+      const res = await api.get("/users", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      setUsers(data);
     } catch (err) {
       console.error("Lỗi khi fetch users:", err);
-      message.error("Không thể tải danh sách user");
+      message.error("Không thể tải danh sách người dùng");
     } finally {
       setLoading(false);
     }
