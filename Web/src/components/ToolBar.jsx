@@ -3,6 +3,7 @@ import logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, logout } from "../slices/authSlice";
+import { FaSignOutAlt } from "react-icons/fa";
 
 function ToolBar() {
   const navigate = useNavigate();
@@ -33,6 +34,10 @@ function ToolBar() {
   };
 
   const handleLogout = () => {
+    // Xác nhận đăng xuất
+    if (!window.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+      return;
+    }
     // Xóa Redux + localStorage
     dispatch(logout());
     localStorage.removeItem("accessToken");
@@ -73,10 +78,10 @@ function ToolBar() {
               Xin chào {user.name}
             </button>
             <button
-              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              className="bg-red-500 text-white py-2 px-4 rounded-xl h-16 hover:bg-red-600 transition duration-300"
               onClick={handleLogout}
             >
-              Đăng xuất
+              <FaSignOutAlt />
             </button>
           </div>
         ) : (

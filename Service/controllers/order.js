@@ -1,6 +1,6 @@
-import Order from "../models/Order.js";
-import Domain from "../models/Domain.js";
-import Hosting from "../models/Hosting.js";
+import Order from "../model/order.js";
+import Domain from "../model/domain.js";
+import Hosting from "../model/hosting.js";
 
 // ========== CREATE ORDER (auto calculate total) ==========
 export const createOrder = async (req, res) => {
