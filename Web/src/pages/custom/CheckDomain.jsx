@@ -39,7 +39,16 @@ function CheckDomain() {
   };
 
   const handleSubmit = () => {
+    if (!query.trim()) return;
     navigate(`/check-domain?domain=${query.trim()}`);
+  };
+
+  const handleViewDetail = (id) => {
+    if (!id) {
+      alert("⚠️ Tên miền này chưa có trong cơ sở dữ liệu, vui lòng liên hệ hỗ trợ.");
+      return;
+    }
+    navigate(`/domain-info/${id}`, { state: { domainId: id } });
   };
 
   return (
@@ -68,26 +77,48 @@ function CheckDomain() {
 
       {/* Kết quả */}
       <div className="w-full max-w-3xl mt-8 space-y-4">
-        {results.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex justify-between items-center border rounded-md p-4 bg-white shadow"
-          >
-            <div>
-              <p className="font-bold text-lg">{item.domain}</p>
-              {item.available === false ? (
-                <p className="text-red-600">❌ Rất tiếc, tên miền đã có người mua.</p>
-              ) : item.available === true ? (
-                <p className="text-green-600">✅ Tên miền còn trống, bạn có thể đăng ký.</p>
-              ) : (
-                <p className="text-gray-500">⚠️ Không xác định được trạng thái.</p>
-              )}
+        {loading ? (
+          <p className="text-gray-500">⏳ Đang kiểm tra...</p>
+        ) : results.length > 0 ? (
+          results.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex justify-between items-center border rounded-md p-4 bg-white shadow"
+            >
+              <div>
+                <p className="font-bold text-lg">{item.domain}</p>
+                {item.available === false ? (
+                  <p className="text-red-600">❌ Đã có người đăng ký.</p>
+                ) : item.available === true ? (
+                  <p className="text-green-600">✅ Còn trống, bạn có thể đăng ký.</p>
+                ) : (
+                  <p className="text-gray-500">⚠️ Không xác định được trạng thái.</p>
+                )}
+                <p className="text-gray-700 mt-1">
+                  💲 Giá:{" "}
+                  {item.price
+                    ? item.price.toLocaleString("vi-VN") + " VNĐ"
+                    : "Liên hệ"}
+                </p>
+              </div>
+              <button
+                onClick={() => handleViewDetail(item.dbId)}
+                disabled={!item.dbId}
+                className={`px-4 py-2 rounded ${
+                  item.available
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-200 hover:bg-gray-300"
+                } ${!item.dbId ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {item.available ? "Mua ngay" : "Xem chi tiết"}
+              </button>
             </div>
-            <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-              Xem thông tin tên miền
-            </button>
-          </div>
-        ))}
+          ))
+        ) : domain ? (
+          <p className="text-gray-500">
+            🔍 Không tìm thấy kết quả nào cho "{domain}".
+          </p>
+        ) : null}
       </div>
     </div>
   );

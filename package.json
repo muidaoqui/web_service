@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "dns": "^0.2.2",
+    "node-fetch": "^3.3.2",
+    "promises": "^0.2.5",
+    "whoiser": "^2.0.0-beta.8"
+  }
+}

@@ -17,6 +17,8 @@ import CheckDomain from "./pages/custom/CheckDomain";
 import DomainOrder from "./pages/custom/DomainOrder";
 import HostingOrder from "./pages/custom/HostingOrder";
 import Pay from "./pages/custom/Pay";
+import DomainInfo from "./pages/custom/DomainInfo";
+
 
 // Pages (Admin)
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -93,7 +95,7 @@ function App() {
               }
             />
             <Route path="/check-domain" element={<CheckDomain />} />
-
+            <Route path="/domain-info/:domain" element={<DomainInfo />} />
             {/* Auth pages */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
