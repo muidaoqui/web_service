@@ -155,15 +155,15 @@ function Hosting() {
   ];
 
   const features = [
-    { icon: <FaFireAlt className="text-red-500 text-4xl" />, title: "Nhanh chóng - Bảo mật", desc: "Sử dụng công nghệ cân bằng tải..." },
-    { icon: <FaDatabase className="text-yellow-500 text-4xl" />, title: "Dữ liệu Database", desc: "Toàn bộ dữ liệu website được sao lưu..." },
-    { icon: <FaGlobe className="text-orange-500 text-4xl" />, title: "Đa dạng địa chỉ IP", desc: "Cung cấp giải pháp SEO hosting..." },
-    { icon: <FaShieldAlt className="text-green-500 text-4xl" />, title: "Bảo mật dữ liệu", desc: "Ngăn chặn tấn công Local-Attack" },
-    { icon: <FaLifeRing className="text-pink-500 text-4xl" />, title: "Hỗ trợ 24/7", desc: "Đội ngũ kỹ thuật giàu kinh nghiệm..." },
-    { icon: <FaTools className="text-gray-600 text-4xl" />, title: "Quản lý dễ dàng", desc: "Tích hợp sẵn tính năng quản lý IP..." },
-    { icon: <FaBinoculars className="text-blue-500 text-4xl" />, title: "Chống SPAM/VIRUS", desc: "Sử dụng Anti-spam Spam Assassin..." },
-    { icon: <FaTachometerAlt className="text-red-400 text-4xl" />, title: "Tối ưu website", desc: "Giúp website hoạt động trơn tru..." },
-    { icon: <FaBug className="text-red-600 text-4xl" />, title: "Khắc phục sự cố", desc: "Đội ngũ kỹ thuật chuyên nghiệp..." },
+    { icon: <FaFireAlt className="text-red-500 text-4xl" />, title: "Nhanh chóng - Bảo mật", desc: "Sử dụng công nghệ cân bằng tải cùng với việc tối ưu mã hóa dữ liệu giúp việc gửi nhận/mail diễn ra thông suốt, nhanh chóng, an toàn và bảo mật" },
+    { icon: <FaDatabase className="text-yellow-500 text-4xl" />, title: "Dữ liệu Database", desc: "Toàn bộ dữ liệu website và dữ liệu khách hàng được sao lưu định kỳ vào khung giờ thấp điểm" },
+    { icon: <FaGlobe className="text-orange-500 text-4xl" />, title: "Đa dạng địa chỉ IP", desc: "Cung cấp giải pháp SEO hosting với nhiều địa chỉ IP khác dải(lớp) C giúp website của bạn đạt thứ hạng nhanh chóng" },
+    { icon: <FaShieldAlt className="text-green-500 text-4xl" />, title: "Bảo mật dữ liệu", desc: "Phần mềm quản trị Direct Admin cùng với hệ điều hành Linux được sử dụng trên máy chủ hosting giúp ngăn chặn 99,99% nguy cơ tấn công Local-Attack" },
+    { icon: <FaLifeRing className="text-pink-500 text-4xl" />, title: "Hỗ trợ 24/7", desc: "Là nhà cung cấp dịch vụ lớn và uy tín trên 10 năm, chúng tôi luôn có đội ngũ kỹ thuật giàu kinh nghiệm, chuyên nghiệp, nhiệt tình và chu đáo hỗ trợ khách hàng 24/7 để xử lý mọi tình huống trong quá trình sử dụng." },
+    { icon: <FaTools className="text-gray-600 text-4xl" />, title: "Quản lý dễ dàng", desc: "Tích hợp sẵn tính năng quản lý IP trên iPanel, giúp bạn có thể tùy biến, thay đổi IP dễ dàng cho các website của mình" },
+    { icon: <FaBinoculars className="text-blue-500 text-4xl" />, title: "Chống SPAM/VIRUS", desc: "Hệ thống sử dụng phần mềm Anti-spam Spam Assassin giúp việc lọc và xử lý spam hiệu quả" },
+    { icon: <FaTachometerAlt className="text-red-400 text-4xl" />, title: "Tối ưu website", desc: "Giúp website hoạt động trơn tru hơn, tăng trải nghiệm người dùng, cải thiện tỷ lệ chuyển đổi đem tới sự hài lòng cao cho khách hàng." },
+    { icon: <FaBug className="text-red-600 text-4xl" />, title: "Khắc phục sự cố", desc: "Đội ngũ kỹ thuật chuyên nghiệp với các phương án khắc phục sự cố trong thời gian nhanh nhất, giảm thiếu rủi ro không đáng có" },
   ];
 
   return (
@@ -176,7 +176,7 @@ function Hosting() {
             BẢNG GIÁ HOSTING TẠI MD
           </h1>
           <p className="text-lg text-gray-700 mt-4 text-center">
-            Là gói dịch vụ lưu trữ website chuyên nghiệp...
+            Là gói dịch vụ lưu trữ website chuyên nghiệp có máy chủ đặt tại Việt Nam với đường truyền tốc độ cao và sử dụng công nghệ đám mây. Linux Hosting luôn là giải pháp phù hợp cho các cá nhân hoặc doanh nghiệp muốn có một website giới thiệu, giao dịch thương mại trên Internet một cách hiệu quả và tiết kiệm chi phí. 
           </p>
         </div>
 
