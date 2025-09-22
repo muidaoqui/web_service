@@ -1,5 +1,5 @@
 import React from "react";
-import bg3 from "../assets/bg3.png";
+import bg3 from "../../assets/bg3.png";
 import {
     FaLightbulb,
     FaPaintBrush,

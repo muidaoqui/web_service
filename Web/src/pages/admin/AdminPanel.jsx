@@ -6,9 +6,9 @@ import {
   PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
-import AdminUsersList from "../../components/AdminUsersList";
-import AdminDomain from "../../components/AdminDomain";
-import AdminHosting from "../../components/AdminHosting";
+import AdminUsersList from "../../components/admin/AdminUsersList";
+import AdminDomain from "../../components/admin/AdminDomain";
+import AdminHosting from "../../components/admin/AdminHosting";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28", "#AA33FF"];

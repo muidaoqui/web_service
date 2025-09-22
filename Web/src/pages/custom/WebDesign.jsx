@@ -1,8 +1,8 @@
 import React from "react";
 import mau from "../../assets/mau.png";
 import mau1 from "../../assets/mau1.png";
-import Procedure from "../../components/Procedure";
-import Adventage from "../../components/Advantage";
+import Procedure from "../../components/custom/Procedure";
+import Adventage from "../../components/custom/Advantage";
 
 function WebDesign() {
     return (

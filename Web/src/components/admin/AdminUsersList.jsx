@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../utils/api";
+import api from "../../utils/api"; // axios instance
 import {
   Table,
   Tag,
@@ -18,44 +18,48 @@ const { Option } = Select;
 const { confirm } = Modal;
 const { Search } = Input;
 
-function AdminDomain() {
-  const [domains, setDomains] = useState([]);
+function AdminUsersList() {
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedDomain, setSelectedDomain] = useState(null);
+  const [filterRole, setFilterRole] = useState("all");
+  const [selectedUser, setSelectedUser] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [filterType, setFilterType] = useState("all");
   const [form] = Form.useForm();
+  const token = localStorage.getItem("accessToken");
 
-  // Fetch domains
-  const fetchDomains = async () => {
+  // Fetch Users
+  const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/domains");
-      const data = res.data.data || res.data || [];
-      setDomains(Array.isArray(data) ? data : []);
+      const res = await api.get("/users", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      setUsers(data);
     } catch (err) {
-      console.error("Lỗi khi fetch domains:", err);
-      message.error("Không thể tải danh sách domain");
+      console.error("Lỗi khi fetch users:", err);
+      message.error("Không thể tải danh sách người dùng");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDomains();
+    fetchUsers();
   }, []);
 
-  // Edit domain
-  const handleEdit = (domain) => {
-    setSelectedDomain(domain);
-    form.setFieldsValue(domain);
+  // Edit user
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    form.setFieldsValue(user);
     setIsDrawerOpen(true);
   };
 
-  // Create new domain
+  // Create new user
   const handleCreateNew = () => {
-    setSelectedDomain(null);
+    setSelectedUser(null);
     form.resetFields();
     setIsDrawerOpen(true);
   };
@@ -63,67 +67,73 @@ function AdminDomain() {
   // Close drawer
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
-    setSelectedDomain(null);
+    setSelectedUser(null);
   };
 
   // Submit form
   const handleSubmit = async (values) => {
     try {
-      if (selectedDomain) {
-        await api.put(`/domains/${selectedDomain._id}`, values);
+      if (selectedUser) {
+        await api.put(`/users/${selectedUser._id}`, values);
         message.success("Cập nhật thành công");
       } else {
-        await api.post("/domains", values);
+        await api.post("/users/register", values);
         message.success("Tạo mới thành công");
       }
-      fetchDomains();
+      fetchUsers();
       setIsDrawerOpen(false);
     } catch (err) {
-      console.error("Lỗi khi lưu domain:", err);
-      message.error("Lưu domain thất bại");
+      console.error("Lỗi khi lưu user:", err);
+      message.error("Lưu user thất bại");
     }
   };
 
-  // Delete domain
-  const handleDelete = (domain) => {
+  // Delete user
+  const handleDelete = (user) => {
     confirm({
-      title: "Bạn có chắc muốn xóa domain này?",
-      content: domain.name,
+      title: "Bạn có chắc muốn xóa người dùng này?",
+      content: user.email,
       okText: "Xóa",
       okType: "danger",
       cancelText: "Hủy",
       onOk: async () => {
         try {
-          if (!domain._id) {
-            message.error("Domain không có _id");
-            return;
-          }
-          const res = await api.delete(`/domains/${domain._id}`);
-          message.success(res.data.message || "Xóa thành công");
-          fetchDomains();
+          await api.delete(`/users/${user._id}`);
+          message.success("Xóa thành công");
+          fetchUsers();
         } catch (err) {
-          message.error("Xóa thất bại");
-          console.error("Lỗi khi xóa domain:", err);
+          console.error("Lỗi khi xóa user:", err);
+          message.error("Xóa user thất bại");
         }
       },
     });
   };
 
-  // Filter + search
-  const filteredDomains = domains
-    .filter((d) => filterType === "all" || d.type === filterType)
-    .filter((d) => d.name.toLowerCase().includes(search.toLowerCase()));
+  // Filter users
+  const filteredUsers = users.filter((u) => {
+    const matchSearch =
+      search === "" ||
+      u.name?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase());
+    const matchRole = filterRole === "all" || u.role === filterRole;
+    return matchSearch && matchRole;
+  });
 
   // Table columns
   const columns = [
-    { title: "Tên miền", dataIndex: "name", key: "name" },
-    { title: "Đơn giá", dataIndex: "newPrice", key: "newPrice" },
-    { title: "Gia hạn", dataIndex: "renewPrice", key: "renewPrice" },
+    { title: "Tên người dùng", dataIndex: "name", key: "name" },
+    { title: "Email", dataIndex: "email", key: "email" },
     {
-      title: "Loại",
-      dataIndex: "type",
-      key: "type",
-      render: (t) => <Tag color="blue">{t}</Tag>,
+      title: "Password",
+      dataIndex: "password",
+      key: "password",
+      render: () => "••••••", // ẩn mật khẩu
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (r) => <Tag color={r === "admin" ? "red" : "blue"}>{r}</Tag>,
     },
     {
       title: "Trạng thái",
@@ -154,29 +164,29 @@ function AdminDomain() {
 
   return (
     <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Admin Domain</h1>
+      <h1 className="text-3xl font-bold text-center mb-8">Admin Users</h1>
 
       {/* Action bar */}
       <div className="flex justify-between mb-4">
         <Space>
           <Select
-            value={filterType}
-            onChange={setFilterType}
+            value={filterRole}
+            onChange={setFilterRole}
             style={{ width: 160 }}
           >
-            <Option value="all">-- Tất cả loại --</Option>
-            <Option value="qt">Quốc tế</Option>
-            <Option value="vn">.VN</Option>
-            <Option value="khac">Khác</Option>
+            <Option value="all">-- Tất cả role --</Option>
+            <Option value="admin">Admin</Option>
+            <Option value="user">User</Option>
           </Select>
           <Search
-            placeholder="Tìm theo tên miền..."
+            placeholder="Tìm theo tên hoặc email..."
             allowClear
-            onSearch={setSearch}
+            onSearch={(value) => setSearch(value)}
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: 250 }}
           />
         </Space>
+
         <Space>
           <Button type="primary" onClick={handleCreateNew}>
             ➕ Tạo mới
@@ -189,7 +199,7 @@ function AdminDomain() {
       {/* Data table */}
       <Table
         columns={columns}
-        dataSource={filteredDomains}
+        dataSource={filteredUsers}
         rowKey="_id"
         loading={loading}
         pagination={{ pageSize: 5 }}
@@ -197,7 +207,7 @@ function AdminDomain() {
 
       {/* Drawer Form */}
       <Drawer
-        title={selectedDomain ? "Chỉnh sửa Domain" : "Tạo mới Domain"}
+        title={selectedUser ? "Chỉnh sửa User" : "Tạo mới User"}
         width={480}
         onClose={handleCloseDrawer}
         open={isDrawerOpen}
@@ -207,39 +217,47 @@ function AdminDomain() {
           form={form}
           layout="vertical"
           onFinish={handleSubmit}
-          initialValues={{ isDeleted: false }}
+          initialValues={{ isDeleted: false, role: "user" }}
         >
           <Form.Item
             name="name"
-            label="Tên miền"
-            rules={[{ required: true, message: "Nhập tên miền" }]}
+            label="Tên người dùng"
+            rules={[{ required: true, message: "Nhập tên người dùng" }]}
           >
             <Input />
           </Form.Item>
+
           <Form.Item
-            name="newPrice"
-            label="Đơn giá"
-            rules={[{ required: true, message: "Nhập đơn giá" }]}
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Nhập email" }]}
           >
-            <Input type="number" />
+            <Input type="email" />
           </Form.Item>
+
           <Form.Item
-            name="renewPrice"
-            label="Gia hạn"
-            rules={[{ required: true, message: "Nhập giá gia hạn" }]}
+            name="password"
+            label="Password"
+            rules={[{ required: true, message: "Nhập password" }]}
           >
-            <Input type="number" />
+            <Input.Password />
           </Form.Item>
-          <Form.Item name="type" label="Loại">
-            <Select placeholder="Chọn loại domain">
-              <Option value="qt">Quốc tế</Option>
-              <Option value="vn">.VN</Option>
-              <Option value="khac">Khác</Option>
+
+          <Form.Item name="role" label="Role">
+            <Select>
+              <Option value="admin">Admin</Option>
+              <Option value="user">User</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="isDeleted" label="Trạng thái" valuePropName="checked">
+
+          <Form.Item
+            name="isDeleted"
+            label="Trạng thái"
+            valuePropName="checked"
+          >
             <Switch checkedChildren="Hoạt động" unCheckedChildren="Đã xóa" />
           </Form.Item>
+
           <div className="flex justify-end gap-2">
             <Button onClick={handleCloseDrawer}>Hủy</Button>
             <Button type="primary" htmlType="submit">
@@ -252,4 +270,4 @@ function AdminDomain() {
   );
 }
 
-export default AdminDomain;
+export default AdminUsersList;

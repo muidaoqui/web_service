@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess, logout } from "../slices/authSlice";
+import { loginSuccess, logout } from "../../slices/authSlice";
 import { FaSignOutAlt } from "react-icons/fa";
 
 function ToolBar() {

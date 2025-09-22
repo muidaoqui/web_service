@@ -1,5 +1,5 @@
 import React from "react";
-import bg4 from "../assets/bg4.png";
+import bg4 from "../../assets/bg4.png";
 const RotatingDots = () => {
   const dotCount = 8;
   const radius = 250;

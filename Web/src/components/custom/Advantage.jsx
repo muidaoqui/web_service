@@ -1,6 +1,6 @@
 import React from "react";
-import bg3 from "../assets/bg3.png";
-import bg7 from "../assets/bg7.svg";
+import bg3 from "../../assets/bg3.png";
+import bg7 from "../../assets/bg7.svg";
 import {
     FaHandshake,
     FaDollarSign,

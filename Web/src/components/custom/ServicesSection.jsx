@@ -1,11 +1,11 @@
 // components/ServicesSection.jsx
 import React from "react";
 import RotatingDots from "./RotatingDots";
-import Laptop from "../assets/Laptop.png";
-import Domain from "../assets/Domain.png";
-import Email from "../assets/Email.png";
-import WebHosting from "../assets/WebHosting.png";
-import bg3 from "../assets/bg3.png";
+import Laptop from "../../assets/Laptop.png";
+import Domain from "../../assets/Domain.png";
+import Email from "../../assets/Email.png";
+import WebHosting from "../../assets/WebHosting.png";
+import bg3 from "../../assets/bg3.png";
 
 function ServicesSection() {
     return (

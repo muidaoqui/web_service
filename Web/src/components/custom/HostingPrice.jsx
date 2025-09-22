@@ -3,7 +3,7 @@ import { Radio, Tabs } from "antd";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import bg3 from "../assets/bg3.png";
+import bg3 from "../../assets/bg3.png";
 function HostingPrice() {
     const [size, setSize] = useState("small");
 

@@ -8,6 +8,7 @@ import hostingRoutes from "./routes/hosting.js";
 import userRoutes from './routes/users.js';
 import checkDomain from './routes/checkDomain.js';
 import orderRoutes from './routes/order.js';
+import themeRoutes from "./routes/theme.js"
 
 const app = express();
 app.use(helmet());
@@ -27,5 +28,6 @@ app.use("/api/hostings", hostingRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/check-domain", checkDomain);
 app.use("/api/orders", orderRoutes);
+app.use("/api/themes", themeRoutes);
 
 app.listen(5000, () => console.log("✅ Server running on port 5000"));

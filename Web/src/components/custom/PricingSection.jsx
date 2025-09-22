@@ -1,8 +1,8 @@
 // components/PricingSection.jsx
 import React from "react";
-import bg3 from "../assets/bg3.png";
-import bg5 from "../assets/bg5.png";
-import bg6 from "../assets/bg6.png";
+import bg3 from "../../assets/bg3.png";
+import bg5 from "../../assets/bg5.png";
+import bg6 from "../../assets/bg6.png";
 
 function PricingSection() {
     return (

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import ToolBar from "./components/ToolBar";
-import Footer from "./components/Footer";
+import ToolBar from "./components/custom/ToolBar";
+import Footer from "./components/custom/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages (Custom)
@@ -24,9 +24,9 @@ import DomainInfo from "./pages/custom/DomainInfo";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminPanel from "./pages/admin/AdminPanel";
 import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDomain from "./components/AdminDomain";
-import AdminHosting from "./components/AdminHosting";
-import AdminEmail from "./components/AdminEmail";
+import AdminDomain from "./components/admin/AdminDomain";
+import AdminHosting from "./components/admin/AdminHosting";
+import AdminEmail from "./components/admin/AdminEmail";
 
 function App() {
   const staticRoutes = [
