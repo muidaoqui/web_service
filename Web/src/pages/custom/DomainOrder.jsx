@@ -1,60 +1,27 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { Card, Button, Select, Space, Divider, message, notification } from "antd";
-import { DollarOutlined, CalendarOutlined, ShoppingCartOutlined, ReloadOutlined } from "@ant-design/icons";
+import { Card, Select, Space, Divider, notification } from "antd";
+import { DollarOutlined, CalendarOutlined, ReloadOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
 function DomainOrder() {
   const location = useLocation();
   const navigate = useNavigate();
-  // Nhận dữ liệu tên miền từ state của router, được truyền từ trang trước
   const domainInfo = location.state?.domainInfo;
 
-  // Kiểm tra xem dữ liệu có hợp lệ không
   if (!domainInfo || !domainInfo.name || !domainInfo.newPrice) {
     notification.error({
-      message: 'Lỗi',
-      description: 'Không có thông tin tên miền hợp lệ để đặt hàng.',
+      message: "Lỗi",
+      description: "Không có thông tin tên miền hợp lệ để đặt hàng.",
     });
     return <div className="p-6 text-center text-red-500">Không có thông tin tên miền hợp lệ!</div>;
   }
 
-  const [loading, setLoading] = useState(false);
   const [selectedYear, setSelectedYear] = useState(1);
-  const [renewalYear, setRenewalYear] = useState(1);
 
-  // Tính toán tổng giá
   const calculateTotalPrice = (years) => {
     return domainInfo.newPrice * years;
-  };
-
-  const handleOrder = async () => {
-    setLoading(true);
-    try {
-      await axios.post("/api/orders", {
-        items: [
-          {
-            productType: "domain",
-            productId: domainInfo._id, // Hoặc ID nếu bạn có
-            domainName: domainInfo.name,
-            newPrice: domainInfo.newPrice,
-            duration: selectedYear,
-            renewal: renewalYear
-          },
-        ],
-        paymentMethod: "bank",
-        contact: "user_contact_info_here", // Thay thế bằng thông tin người dùng
-      });
-      message.success("Đặt hàng tên miền thành công!");
-      navigate("/profile");
-    } catch (err) {
-      console.error("Lỗi đặt hàng tên miền:", err);
-      message.error("Có lỗi xảy ra, vui lòng thử lại!");
-    } finally {
-      setLoading(false);
-    }
   };
 
   const getRenewalPrice = () => {
@@ -69,47 +36,59 @@ function DomainOrder() {
     { years: 5, label: "5 năm" },
   ];
 
+  const handleGoToPay = () => {
+    const cart = [
+      {
+        productType: "domain",
+        productId: domainInfo._id,
+        name: domainInfo.name,
+        price: calculateTotalPrice(selectedYear),
+        duration: selectedYear,
+      },
+    ];
+    navigate("/pay", { state: { cart } });
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      {/* Cột chính: Tùy chọn đăng ký */}
       <div className="flex-1">
-        <h2 className="text-2xl font-bold mb-4 text-green-700">
-          Xác nhận Đăng ký Tên miền
-        </h2>
+        <h2 className="text-2xl font-bold mb-4 text-green-700">Xác nhận Đăng ký Tên miền</h2>
         <Card className="rounded-xl shadow-lg p-6 bg-white">
           <h3 className="text-xl font-semibold mb-2 text-gray-800">
-            <DollarOutlined style={{ color: '#16a34a' }} /> Tên miền: <span className="text-green-600">{domainInfo.name}</span>
+            <DollarOutlined style={{ color: "#16a34a" }} /> Tên miền:{" "}
+            <span className="text-green-600">{domainInfo.name}</span>
           </h3>
           <Divider />
           <Space direction="vertical" size="large" className="w-full">
             <div className="flex items-center">
-              <CalendarOutlined style={{ fontSize: '20px', color: '#16a34a', marginRight: '8px' }} />
+              <CalendarOutlined style={{ fontSize: "20px", color: "#16a34a", marginRight: "8px" }} />
               <span className="font-semibold text-gray-700">Thời hạn đăng ký:</span>
               <Select
                 defaultValue={1}
-                style={{ width: 120, marginLeft: 'auto' }}
+                style={{ width: 120, marginLeft: "auto" }}
                 onChange={setSelectedYear}
                 value={selectedYear}
               >
-                {yearsOptions.map(opt => (
-                  <Option key={opt.years} value={opt.years}>{opt.label}</Option>
+                {yearsOptions.map((opt) => (
+                  <Option key={opt.years} value={opt.years}>
+                    {opt.label}
+                  </Option>
                 ))}
               </Select>
             </div>
-            
             <div className="flex items-center">
-              <ReloadOutlined style={{ fontSize: '20px', color: '#16a34a', marginRight: '8px' }} />
+              <ReloadOutlined style={{ fontSize: "20px", color: "#16a34a", marginRight: "8px" }} />
               <span className="font-semibold text-gray-700">Giá gia hạn hàng năm:</span>
               <span className="ml-auto text-gray-900 font-bold">
-                {getRenewalPrice() === "Liên hệ" ? "Liên hệ" : `${getRenewalPrice().toLocaleString("vi-VN")} VNĐ/năm`}
+                {getRenewalPrice() === "Liên hệ"
+                  ? "Liên hệ"
+                  : `${getRenewalPrice().toLocaleString("vi-VN")} VNĐ/năm`}
               </span>
             </div>
-            
           </Space>
         </Card>
       </div>
 
-      {/* Cột phụ: Tóm tắt đơn hàng */}
       <div className="w-full md:w-80">
         <Card className="rounded-xl shadow-lg p-6 bg-white">
           <h3 className="text-xl font-bold mb-4 text-gray-800">Tóm tắt đơn hàng</h3>
@@ -136,15 +115,12 @@ function DomainOrder() {
             </div>
           </div>
         </Card>
-        <Button
-          type="primary"
-          onClick={handleOrder}
-          disabled={loading}
-          className="w-full mt-4 py-3 font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg transition-all shadow-lg"
-          icon={<ShoppingCartOutlined />}
+        <button
+          className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-all mt-4"
+          onClick={handleGoToPay}
         >
-          {loading ? "Đang xử lý..." : "Hoàn tất đăng ký"}
-        </Button>
+          Vào giỏ hàng
+        </button>
       </div>
     </div>
   );

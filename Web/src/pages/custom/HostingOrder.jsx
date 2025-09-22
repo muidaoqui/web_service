@@ -1,78 +1,45 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 function HostingOrder() {
   const location = useLocation();
   const navigate = useNavigate();
   const plan = location.state?.plan;
 
-  // Kiểm tra plan và đảm bảo các giá trị cần thiết tồn tại
   if (!plan || !plan.price || !plan.yearly || !plan.name) {
-    
     return <p>Không có thông tin gói hosting hợp lệ!</p>;
   }
-  const [loading, setLoading] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(1);
-  const cleanedString = plan.yearly.replace(/[^0-9]/g, '');
-  const yearlyPrice = Number(cleanedString);
-  const getOriginPrice = (years) => {
-    return isNaN(yearlyPrice) ? 0 : yearlyPrice * years;
-  };
 
-  // Giá ưu đãi
+  const [selectedYear, setSelectedYear] = useState(1);
+  const cleanedString = plan.yearly.replace(/[^0-9]/g, "");
+  const yearlyPrice = Number(cleanedString);
+
+  const getOriginPrice = (years) => yearlyPrice * years;
   const getDiscountPrice = (years) => {
-    if (isNaN(yearlyPrice)) {
-      return 0;
-    }
     if (years === 1) return yearlyPrice;
     if (years === 2) return Math.round(yearlyPrice * 1.8);
     if (years === 3) return Math.round(yearlyPrice * 2.5);
     return yearlyPrice * years;
   };
-
-  // Tiết kiệm
   const getSave = (years) => getOriginPrice(years) - getDiscountPrice(years);
 
   const options = [
-    {
-      years: 1,
-      label: "Đăng ký 1 năm",
-      discount: 0,
-    },
-    {
-      years: 2,
-      label: "Đăng ký 2 năm",
-      discount: getSave(2),
-    },
-    {
-      years: 3,
-      label: "Đăng ký 3 năm",
-      discount: getSave(3),
-    },
+    { years: 1, label: "Đăng ký 1 năm", discount: 0 },
+    { years: 2, label: "Đăng ký 2 năm", discount: getSave(2) },
+    { years: 3, label: "Đăng ký 3 năm", discount: getSave(3) },
   ];
 
-  const handleOrder = async () => {
-    setLoading(true);
-    try {
-      await axios.post("/api/orders", {
-        items: [
-          {
-            productType: "hosting",
-            productId: plan._id,
-            duration: selectedYear, // Sử dụng biến đã chọn
-          },
-        ],
-        paymentMethod: "bank",
-        contact: "user_contact_info_here", // Thay bằng thông tin người dùng
-      });
-      alert("Đặt hàng thành công!");
-      navigate("/profile");
-    } catch (err) {
-      alert("Có lỗi xảy ra, vui lòng thử lại!");
-    } finally {
-      setLoading(false);
-    }
+  const handleGoToPay = () => {
+    const cart = [
+      {
+        productType: "hosting",
+        productId: plan._id,
+        name: plan.name,
+        price: getDiscountPrice(selectedYear),
+        duration: selectedYear,
+      },
+    ];
+    navigate("/pay", { state: { cart } });
   };
 
   return (
@@ -115,12 +82,9 @@ function HostingOrder() {
               </div>
             ))}
           </div>
-          <div className="mt-4 text-right">
-            <span className="text-green-700 text-sm">Xem thêm gói khác</span>
-          </div>
         </div>
       </div>
-      {/* Tóm tắt đơn hàng */}
+
       <div className="w-full md:w-80">
         <div className="bg-white rounded-xl shadow p-6 mb-4">
           <h3 className="font-bold mb-2">Tóm tắt đơn hàng</h3>
@@ -136,8 +100,7 @@ function HostingOrder() {
         </div>
         <button
           className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-all"
-          onClick={() => navigate("/pay", { state: { plan, selectedYear } })}
-          disabled={loading}
+          onClick={handleGoToPay}
         >
           Vào giỏ hàng
         </button>
