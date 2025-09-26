@@ -167,7 +167,7 @@ function Hosting() {
   ];
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gray-100 mt-30">
       <img src={poster} alt="poster" className="w-full" />
 
       <div className="flex flex-col justify-center items-center py-16">

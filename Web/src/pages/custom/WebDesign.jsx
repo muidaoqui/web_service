@@ -6,7 +6,7 @@ import Adventage from "../../components/custom/Advantage";
 
 function WebDesign() {
     return (
-        <div className="relative  to-gray-100 overflow-hidden py-16">
+        <div className="mt-30 relative  to-gray-100 overflow-hidden py-16">
             <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center bg-gradient-to-t from-white">
                 {/* Left content */}
                 <div className="md:w-1/2 text-center md:text-left space-y-6">

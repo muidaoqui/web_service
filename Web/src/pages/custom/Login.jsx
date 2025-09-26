@@ -55,7 +55,7 @@ function Login() {
   };
 
   return (
-    <div className="w-full flex justify-center items-center min-h-screen bg-gray-50 px-4">
+    <div className="mt-30 w-full flex justify-center items-center min-h-screen bg-gray-50 px-4">
       <div className="flex flex-col md:flex-row w-full max-w-2xl overflow-hidden rounded-xl shadow-lg bg-white">
         {/* Left banner */}
         <div className="bg-gradient-to-br from-purple-200 to-cyan-200 flex flex-col justify-center items-center p-6 md:p-10 text-cyan-700 md:rounded-l-xl">

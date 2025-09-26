@@ -153,7 +153,7 @@ function AdminDomain() {
   ];
 
   return (
-    <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-4">
+    <div className="min-h-screen text-white p-4 bg-black shadow rounded-2xl mt-30">
       <h1 className="text-3xl font-bold text-center mb-8">Admin Domain</h1>
 
       {/* Action bar */}

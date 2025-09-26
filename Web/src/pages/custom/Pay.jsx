@@ -125,7 +125,7 @@ function Pay() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-10">
+    <div className="max-w-4xl mx-auto py-10 mt-30">
       <Stepper steps={steps} activeStep={activeStep} />
       {renderStepContent()}
     </div>

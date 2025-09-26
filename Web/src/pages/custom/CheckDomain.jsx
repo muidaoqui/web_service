@@ -52,7 +52,7 @@ function CheckDomain() {
   };
 
   return (
-    <div className="p-6 flex flex-col items-center bg-gray-50 min-h-screen">
+    <div className="p-6 flex flex-col items-center bg-gray-50 min-h-screen mt-30">
       {/* Ô search */}
       <div className="w-full max-w-2xl flex items-center border-2 border-green-600 rounded-full overflow-hidden">
         <input

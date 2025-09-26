@@ -59,7 +59,7 @@ function DomainInfo() {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto bg-white rounded shadow my-10">
+    <div className="p-6 max-w-2xl mx-auto bg-white rounded shadow my-10 mt-40">
       <h1 className="text-2xl font-bold mb-4">
         Thông tin chi tiết: {info.name}
       </h1>

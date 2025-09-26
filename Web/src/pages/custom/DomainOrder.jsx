@@ -50,7 +50,7 @@ function DomainOrder() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div className="mt-30 flex flex-col md:flex-row gap-8 max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8 ">
       <div className="flex-1">
         <h2 className="text-2xl font-bold mb-4 text-green-700">Xác nhận Đăng ký Tên miền</h2>
         <Card className="rounded-xl shadow-lg p-6 bg-white">

@@ -76,7 +76,7 @@ function Domain() {
   const sliderDomains = Array.isArray(domains) ? domains.slice(0, 6) : [];
 
   return (
-    <div className="p-4 flex flex-col justify-center items-center text-center bg-gradient-to-b from-red-50 to-white">
+    <div className="mt-30 p-4 flex flex-col justify-center items-center text-center bg-gradient-to-b from-red-50 to-white">
       <div className="w-full flex flex-col justify-center items-center my-8">
         {/* Tiêu đề */}
         <h1 className="text-4xl font-bold text-red-600">KIỂM TRA TÊN MIỀN</h1>

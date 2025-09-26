@@ -100,7 +100,7 @@ function Profile() {
   if (!userInfo) return <p>Đang tải...</p>;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+    <div className="mt-30 min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
       <h1 className="text-3xl font-bold mb-6">Trang Cá Nhân</h1>
 
       {editing ? (

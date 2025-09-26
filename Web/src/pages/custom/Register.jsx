@@ -15,7 +15,7 @@ function Register() {
     const navigate = useNavigate();
 
     return (
-        <div className="w-full flex justify-center items-center min-h-screen bg-gray-100 px-4">
+        <div className="mt-30 w-full flex justify-center items-center min-h-screen bg-gray-100 px-4">
             <div className="flex flex-col md:flex-row w-full max-w-2xl overflow-hidden rounded-xl shadow-lg bg-white">
 
                 <div className="flex flex-col justify-center w-full p-6 md:p-10">
