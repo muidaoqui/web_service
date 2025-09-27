@@ -1,7 +1,10 @@
 import fetch from "node-fetch";
 import DomainModel from "../model/domain.js";
+import dotenv from "dotenv";
 
-const RAPID_API_KEY = "0c58e102demsh61ba6556971d5b6p1b71d6jsn0c7370e5b42b"; 
+dotenv.config();
+
+const RAPID_API_KEY = process.env.RAPIDAPI_KEY;
 const DOMAINR_HOST = "domainr.p.rapidapi.com";
 
 const TLD_LIST = [".COM", ".NET", ".ORG", ".VN", ".COM.VN", ".EDU.VN"]; 

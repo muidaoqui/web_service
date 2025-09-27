@@ -193,7 +193,7 @@ function Hosting() {
             NHỮNG LỢI ÍCH KHI ĐĂNG KÝ HOSTING TẠI MD
           </h1>
           <p className="text-lg text-gray-700 mt-4 text-center">
-            Chúng tôi chuẩn hóa toàn bộ quy trình...
+            Chúng tôi chuẩn hóa toàn bộ quy trình quản lý hosting bằng công nghệ để mang đến sự thuận tiện và trải nghiệm tối đa cho khách hàng.
           </p>
         </div>
 

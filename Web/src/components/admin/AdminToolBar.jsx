@@ -8,7 +8,7 @@ function AdminToolBar() {
       {/* Logo */}
       <div className="flex-shrink-0">
         <Link to="/admin/panel">
-          <img src={logo} alt="Logo" className="h-16 w-auto" />
+          <img src={logo} alt="Logo" className="h-40 w-auto" />
         </Link>
       </div>
 

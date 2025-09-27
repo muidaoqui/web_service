@@ -88,11 +88,11 @@ function CheckDomain() {
               <div>
                 <p className="font-bold text-lg">{item.domain}</p>
                 {item.available === false ? (
-                  <p className="text-red-600">❌ Đã có người đăng ký.</p>
+                  <p className="text-red-600"> Đã có người đăng ký.</p>
                 ) : item.available === true ? (
-                  <p className="text-green-600">✅ Còn trống, bạn có thể đăng ký.</p>
+                  <p className="text-green-600"> Còn trống, chưa có người đăng ký.</p>
                 ) : (
-                  <p className="text-gray-500">⚠️ Không xác định được trạng thái.</p>
+                  <p className="text-gray-500"> Còn trống, chưa có người đăng ký.</p>
                 )}
                 <p className="text-gray-700 mt-1">
                   💲 Giá:{" "}

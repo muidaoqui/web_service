@@ -54,7 +54,7 @@ function AdminPanel() {
 
   return (
     <div>
-      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 mt-30">
         {/* Biểu đồ Doanh thu Domain */}
         <div className="bg-black p-4 shadow rounded-2xl">
           <h2 className="text-lg font-semibold mb-2 text-white">Doanh thu Domain</h2>
