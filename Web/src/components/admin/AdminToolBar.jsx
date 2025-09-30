@@ -17,11 +17,11 @@ function AdminToolBar() {
         <Link to="/admin/domain" className="hover:text-blue-600 transition">TÊN MIỀN</Link>
         <Link to="/admin/hosting" className="hover:text-blue-600 transition">HOSTING</Link>
         <Link to="/admin/email" className="hover:text-blue-600 transition">EMAIL SERVER</Link>
-        <Link to="/admin/web-design" className="hover:text-blue-600 transition">THIẾT KẾ WEBSITE</Link>
+        <Link to="/admin" className="hover:text-blue-600 transition">THIẾT KẾ WEBSITE</Link>
         <Link to="/admin/templates" className="hover:text-blue-600 transition">MẪU GIAO DIỆN</Link>
-        <Link to="/admin/blog" className="hover:text-blue-600 transition">BLOG</Link>
-        <Link to="/admin/maintenance" className="hover:text-blue-600 transition">CHĂM SÓC WEB</Link>
-        <Link to="/admin/recruitment" className="hover:text-blue-600 transition">TUYỂN DỤNG</Link>
+        <Link to="/admin" className="hover:text-blue-600 transition">BLOG</Link>
+        <Link to="/admin" className="hover:text-blue-600 transition">CHĂM SÓC WEB</Link>
+        <Link to="/admin" className="hover:text-blue-600 transition">TUYỂN DỤNG</Link>
       </div>
 
       {/* Admin button */}

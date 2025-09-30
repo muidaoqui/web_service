@@ -26,26 +26,26 @@ function Login() {
     setLoading(true);
 
     try {
+      // 1. Gọi API login
       const res = await axios.post(`${BASE_URL}/api/users/login`, {
         email,
         password,
       });
 
       const { accessToken, refreshToken, user } = res.data;
-
-      if (accessToken && refreshToken && user) {
-        // Cập nhật Redux state
-        dispatch(loginSuccess({ accessToken, refreshToken, user }));
-
-        // Nếu muốn vẫn lưu localStorage để reload không bị mất
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("user", JSON.stringify(user));
-
-        navigate("/home");
-      } else {
-        setError("Không nhận được token từ server");
+      if (!accessToken || !refreshToken || !user) {
+        setError("Không nhận được dữ liệu hợp lệ từ server");
+        return;
       }
+
+      // 2. Lưu Redux + localStorage
+      dispatch(loginSuccess({ accessToken, refreshToken, user }));
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // 3. Điều hướng SAU khi Redux đã có user
+      navigate("/profile"); 
     } catch (err) {
       console.error("Login error:", err);
       setError(err.response?.data?.message || "Đăng nhập thất bại");

@@ -14,19 +14,14 @@ export function generateAccessToken(user) {
 
 // Tạo refresh token (7 ngày)
 export function generateRefreshToken(user) {
-  return jwt.sign(
-    { id: user._id },
-    REFRESH_SECRET,
-    { expiresIn: "7d" }
-  );
+  return jwt.sign({ id: user._id }, REFRESH_SECRET, { expiresIn: "7d" });
 }
 
-// Verify access token
+// Verify
 export function verifyAccessToken(token) {
   return jwt.verify(token, ACCESS_SECRET);
 }
 
-// Verify refresh token
 export function verifyRefreshToken(token) {
   return jwt.verify(token, REFRESH_SECRET);
 }

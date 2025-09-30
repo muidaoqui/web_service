@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -9,14 +10,36 @@ import {
 import AdminUsersList from "../../components/admin/AdminUsersList";
 import AdminDomain from "../../components/admin/AdminDomain";
 import AdminHosting from "../../components/admin/AdminHosting";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import AdminTheme from "../../components/admin/AdminTheme";
 const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28", "#AA33FF"];
 
 function AdminPanel() {
   const [domains, setDomains] = useState([]);
   const [users, setUsers] = useState([]);
   const [hostings, setHostings] = useState([]);
+  const [themes, setThemes] = useState([]);
+  const token = localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resDomains = await axios.get("/api/domains");
+        const resUsers = await axios.get("/api/users", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const resHostings = await axios.get("/api/hostings");
+        const resThemes = await axios.get("/api/themes");
+        setDomains(resDomains.data.data || []);
+        setUsers(resUsers.data.data || []);
+        setHostings(resHostings.data.data.hostings || []);
+        setThemes(resThemes.data.data || []);
+      } catch (err) {
+        console.error("Lỗi fetch data:", err);
+      }
+    };
+    fetchData();
+  }, [token]);
+
   // --- DOMAIN DATA ---
   const domainData = [
     { name: "Quốc tế", value: domains.filter(d => d.type === "qt").length },
@@ -50,6 +73,12 @@ function AdminPanel() {
   const revenueHostingData = hostings.map((h, i) => ({
     tháng: `T${i + 1}`,
     doanhThu: Number(h.price) || 0,
+  }));
+
+  // --- THEME DATA ---
+  const themeData = themes.map(t => ({
+    name: t.name || "Không rõ",
+    lượtDùng: Number(t.usedCount) || 0,
   }));
 
   return (
@@ -136,26 +165,12 @@ function AdminPanel() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-
-        {/* Biểu đồ Hosting Plan */}
-        <div className="bg-black p-4 shadow rounded-2xl">
-          <h2 className="text-lg font-semibold mb-2 text-white">Khách hàng theo gói Hosting</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={hostingPlanData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="gói" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="khách" fill="#FFBB28" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
       </div>
 
       {/* Bảng quản lý */}
       <div className="mt-6 space-y-6">
         <AdminUsersList />
+        <AdminTheme />
         <AdminDomain />
         <AdminHosting />
       </div>
@@ -164,3 +179,4 @@ function AdminPanel() {
 }
 
 export default AdminPanel;
+

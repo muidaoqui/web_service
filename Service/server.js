@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import "./model/domain.js";
+import "./model/hosting.js";
 import domainRoutes from "./routes/domain.js";
 import hostingRoutes from "./routes/hosting.js";
 import userRoutes from './routes/users.js';

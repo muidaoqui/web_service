@@ -4,26 +4,41 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, logout } from "../../slices/authSlice";
 import { FaSignOutAlt } from "react-icons/fa";
+import axios from "axios";
 
 function ToolBar() {
+  const BASE_URL = "http://localhost:5000";
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user, accessToken } = useSelector((state) => state.auth);
 
-  // Đồng bộ Redux với localStorage
+  // Khi reload, lấy lại user từ /users/me
   useEffect(() => {
-    if (!user) {
-      const savedUser = localStorage.getItem("user");
-      const accessToken = localStorage.getItem("accessToken");
-      if (savedUser && accessToken) {
-        dispatch(
-          loginSuccess({
-            user: JSON.parse(savedUser),
-            accessToken,
-            refreshToken: localStorage.getItem("refreshToken"),
-          })
-        );
-      }
+    const token = localStorage.getItem("accessToken");
+    if (token && !user) {
+      axios
+        .get(`${BASE_URL}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          console.log("Fetch /me success:", res.data);
+          const u = res.data?.user;
+          if (u) {
+            dispatch(
+              loginSuccess({
+                user: u,
+                accessToken: token,
+                refreshToken: localStorage.getItem("refreshToken"),
+              })
+            );
+            localStorage.setItem("user", JSON.stringify(u));
+          }
+        })
+        .catch((err) => {
+          console.error("Status:", err.response?.status);
+          console.error("Data:", err.response?.data);
+          console.error("Fetch /me error:", err);
+        });
     }
   }, [user, dispatch]);
 

@@ -1,6 +1,6 @@
 import express from "express";
 import domainController from "../controllers/domain.js";
-import { requireApiKey, requireAdmin, requireAuth, requireRole  } from "../middlewares/auth.js"; 
+import { requireAuth, requireRole  } from "../middlewares/auth.js"; 
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import express from "express";
 import { authRegister, authLogin, refreshToken, getAllUsers, getUserById, updateUser, deleteUser, updateMe, getMe} from "../controllers/users.js"; 
-import { requireApiKey, requireAdmin, requireAuth, requireRole  } from "../middlewares/auth.js";   
+import { requireAuth, requireRole  } from "../middlewares/auth.js";   
 
 const router = express.Router();
 
